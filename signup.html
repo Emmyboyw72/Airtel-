@@ -11,9 +11,14 @@
       width:100%;max-width:400px;padding:14px;margin:10px auto;display:block;
       border-radius:10px;font-size:18px;border:1px solid #ccc
     }
-    button{background:#00cc66;color:#fff;font-weight:bold;border:none;cursor:pointer}
-    button:hover{background:#00994d}
+    button {
+      background:#00cc66;color:#fff;font-weight:bold;border:none;cursor:pointer
+    }
+    button:hover {background:#00994d}
     .link{text-align:center;margin-top:15px}
+    .clear-btn {
+      background: #cc0000;
+    }
   </style>
 </head>
 <body>
@@ -26,6 +31,10 @@
 <input id="pass"     type="password" placeholder="Password (≥4 chars)" />
 
 <button onclick="signup()">Sign Up</button>
+
+<!-- 🔴 New Clear Login Button -->
+<button class="clear-btn" onclick="clearLogin()">🧹 Clear Login</button>
+
 <div class="link"><a href="login.html">Already have an account? Login</a></div>
 
 <script>
@@ -48,8 +57,16 @@ function signup() {
   const user = { name, email, phone, password: pwd, balance: 20000 };
   localStorage.setItem("dingle_user", JSON.stringify(user));
   alert("✅ Signup successful! Please login.");
-  window.location.href = "login.html";  // 🔁 Redirects to login
+  window.location.href = "login.html";
+}
+
+// 🧹 Clear login info
+function clearLogin() {
+  localStorage.removeItem("dingle_user");
+  localStorage.removeItem("dingle_logged_in");
+  alert("✅ Login data cleared. You can now register fresh.");
 }
 </script>
+
 </body>
 </html>
