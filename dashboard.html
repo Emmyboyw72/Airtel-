@@ -115,8 +115,6 @@
     <div class="btn" onclick="go('data.html')">Data</div>
     <div class="btn" onclick="go('airtime.html')">Airtime</div>
     <div class="btn" onclick="go('trade.html')">Trade</div>
-    <div class="btn" onclick="go('profile.html')">Profile</div>
-    <div class="btn" onclick="go('invite.html')">Invite</div>
   </div>
 
   <div class="logout">
@@ -138,6 +136,10 @@
       localStorage.setItem("dingle_loggedIn", "false");
       window.location.href = "login.html";
     }
+
+    // Show balance
+    const balance = localStorage.getItem("dingle_balance") || "0";
+    document.querySelector(".amount").innerText = "₦" + Number(balance).toLocaleString();
   </script>
 
 </body>
