@@ -11,8 +11,8 @@
       padding: 0;
       width: 100vw;
       height: 100vh;
-      background-color: #f0f0f0;
       font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
       color: #222;
       font-size: 18px;
       -webkit-text-size-adjust: 100%;
@@ -27,6 +27,7 @@
       align-items: center;
       height: 100%;
       padding: 20px;
+      text-align: center;
     }
 
     h2 {
@@ -60,13 +61,69 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h2>Create Account</h2>
-    <input type="text" placeholder="Full Name" />
-    <input type="email" placeholder="Email" />
-    <input type="password" placeholder="Password" />
-    <button onclick="window.location.href='login.html'">Sign Up</button>
+    <input type="text" id="name" placeholder="Full Name" />
+    <input type="email" id="email" placeholder="Gmail Address" />
+    <input type="tel" id="phone" placeholder="Phone Number" />
+    <input type="password" id="password" placeholder="Password" />
+    <input type="text" id="dingleCode" placeholder="Enter Dingle Code" />
+    <button onclick="signup()">Sign Up</button>
   </div>
+
+  <script>
+    function signup() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const code = document.getElementById("dingleCode").value.trim().toLowerCase();
+
+      // Fixed code check
+      if (code !== "dinglecooperative") {
+        alert("Invalid Dingle Code. Please contact admin.");
+        return;
+      }
+
+      if (!name || !email || !phone || !password) {
+        alert("All fields are required.");
+        return;
+      }
+
+      if (!email.includes("@gmail.com")) {
+        alert("Email must be a Gmail address.");
+        return;
+      }
+
+      if (!/^\d{11}$/.test(phone)) {
+        alert("Phone number must be exactly 11 digits.");
+        return;
+      }
+
+      if (password.length < 4) {
+        alert("Password must be at least 4 characters.");
+        return;
+      }
+
+      const usedPhones = JSON.parse(localStorage.getItem("dingle_usedPhones") || "[]");
+      if (usedPhones.includes(phone)) {
+        alert("This phone number is already used.");
+        return;
+      }
+
+      usedPhones.push(phone);
+      localStorage.setItem("dingle_usedPhones", JSON.stringify(usedPhones));
+
+      localStorage.setItem("dingle_name", name);
+      localStorage.setItem("dingle_email", email);
+      localStorage.setItem("dingle_phone", phone);
+      localStorage.setItem("dingle_password", password);
+      localStorage.setItem("dingle_loggedIn", "false");
+
+      window.location.href = "login.html";
+    }
+  </script>
 </body>
 </html>
