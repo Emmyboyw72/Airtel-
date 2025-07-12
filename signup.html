@@ -3,65 +3,126 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Signup – Dingle</title>
   <style>
-    html,body{margin:0;padding:0;width:100vw;height:100vh;font-family:Arial,sans-serif;
-      background:#f2f2f2;color:#222;font-size:18px;-webkit-text-size-adjust:100%;
-      text-size-adjust:100%;overflow:hidden}
-    .container{height:100%;display:flex;flex-direction:column;justify-content:center;
-      align-items:center;padding:20px;text-align:center}
-    h2{font-size:28px;margin-bottom:20px}
-    input{width:90%;max-width:350px;padding:12px;font-size:18px;margin-bottom:15px;
-      border:1px solid #ccc;border-radius:8px}
-    button{padding:12px 24px;font-size:18px;background:#00cc66;color:#fff;border:none;
-      border-radius:8px;font-weight:bold;cursor:pointer}
-    button:hover{background:#00b359}
-    .login-link{margin-top:15px;font-size:16px}
-    .login-link a{color:#00aa55;font-weight:bold;text-decoration:none}
-    .login-link a:hover{text-decoration:underline}
+    html, body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #111;
+      font-size: 18px;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 18px;
+    }
+
+    button {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px;
+      margin: 20px auto;
+      display: block;
+      font-size: 20px;
+      background-color: #00cc66;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #00994d;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .login-link a {
+      color: #00aa55;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Create Account</h2>
-    <input id="name"       type="text"     placeholder="Full Name" />
-    <input id="email"      type="email"    placeholder="Gmail Address" />
-    <input id="phone"      type="tel"      placeholder="11-digit Phone Number" />
-    <input id="password"   type="password" placeholder="Password (min 4 chars)" />
-    <input id="dingleCode" type="text"     placeholder="Enter Dingle Code" />
-    <button onclick="signup()">Sign Up</button>
-    <div class="login-link">Already have an account? <a href="login.html">Login</a></div>
+
+  <h2>Create Your Dingle Account</h2>
+
+  <input type="text" id="username" placeholder="Full Name" />
+  <input type="email" id="gmail" placeholder="Gmail (must end with @gmail.com)" />
+  <input type="tel" id="phone" placeholder="Phone Number (11 digits)" maxlength="11" />
+  <input type="password" id="password" placeholder="Password (min 4 characters)" />
+  <input type="text" id="signupcode" placeholder="Signup Code (dinglecooperative)" />
+
+  <button onclick="signup()">Sign Up</button>
+
+  <div class="login-link">
+    Already have an account? <a href="login.html">Login</a>
   </div>
 
-  <script>
-    function signup(){
-      const name  = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim().toLowerCase();
-      const phone = document.getElementById('phone').value.trim();
-      const pass  = document.getElementById('password').value.trim();
-      const code  = document.getElementById('dingleCode').value.trim().toLowerCase();
+<script>
+  function signup() {
+    const name = document.getElementById("username").value.trim();
+    const gmail = document.getElementById("gmail").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const pass = document.getElementById("password").value.trim();
+    const code = document.getElementById("signupcode").value.trim().toLowerCase();
 
-      if(code!=="dinglecooperative"){alert("Invalid Dingle Code.");return;}
-      if(!name||!email||!phone||!pass){alert("All fields are required.");return;}
-      if(!email.endsWith("@gmail.com")){alert("Email must be Gmail.");return;}
-      if(!/^\d{11}$/.test(phone)){alert("Phone must be 11 digits.");return;}
-      if(pass.length<4){alert("Password ≥ 4 chars.");return;}
-
-      const used = JSON.parse(localStorage.getItem("dingle_usedPhones")||"[]");
-      if(used.includes(phone)){alert("Phone already used.");return;}
-      used.push(phone); localStorage.setItem("dingle_usedPhones",JSON.stringify(used));
-
-      // save user
-      localStorage.setItem("dingle_name", name);
-      localStorage.setItem("dingle_email", email);
-      localStorage.setItem("dingle_phone", phone);
-      localStorage.setItem("dingle_password", pass);
-      localStorage.setItem("dingle_balance", "20000");  // signup bonus
-      localStorage.setItem("dingle_loggedIn","false");
-
-      window.location.href="login.html";
+    if (!name || !gmail || !phone || !pass || !code) {
+      alert("❌ Please fill in all fields.");
+      return;
     }
-  </script>
+
+    if (!gmail.endsWith("@gmail.com")) {
+      alert("❌ Gmail must end with @gmail.com");
+      return;
+    }
+
+    if (phone.length !== 11 || isNaN(phone)) {
+      alert("❌ Phone number must be 11 digits.");
+      return;
+    }
+
+    if (pass.length < 4) {
+      alert("❌ Password must be at least 4 characters.");
+      return;
+    }
+
+    if (code !== "dinglecooperative") {
+      alert("❌ Invalid signup code.");
+      return;
+    }
+
+    // Save details
+    localStorage.setItem("dingle_user_name", name);
+    localStorage.setItem("dingle_user_gmail", gmail);
+    localStorage.setItem("dingle_user_phone", phone);
+    localStorage.setItem("dingle_user_pass", pass);
+    localStorage.setItem("dingle_balance", "20000");
+
+    alert("✅ Signup successful! ₦20,000 has been added to your account.");
+    window.location.href = "login.html";
+  }
+</script>
+
 </body>
 </html>
