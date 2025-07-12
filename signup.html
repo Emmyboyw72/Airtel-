@@ -1,38 +1,101 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Signup – Dingle</title>
-<style>
- body{font-family:Arial;padding:20px;background:#f4f4f4;font-size:18px}
- input,button{width:100%;max-width:400px;padding:14px;margin:10px auto;
-  border-radius:10px;border:1px solid #ccc;font-size:18px}
- button{background:#00cc66;color:#fff;font-weight:bold;border:none;cursor:pointer}
- button:hover{background:#00994d}
- h2{text-align:center}
-</style></head><body>
-<h2>Create Account</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Signup – Dingle</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      font-size: 18px;
+    }
+    h2 {
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 10px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #00cc66;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00994d;
+    }
+    .link {
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
 
-<input id="username" placeholder="Full Name">
-<input id="email" type="email" placeholder="Gmail (must end with @gmail.com)">
-<input id="phone" type="number" placeholder="Phone (11 digits)">
-<input id="pass" type="password" placeholder="Password (≥4 chars)">
-<button onclick="signup()">Sign Up</button>
-<div style="text-align:center"><a href="login.html">Already have an account? Login</a></div>
+  <h2>Create Account</h2>
 
-<script>
-function signup(){
-  const n=document.getElementById("username").value.trim();
-  const e=document.getElementById("email").value.trim();
-  const p=document.getElementById("phone").value.trim();
-  const pw=document.getElementById("pass").value.trim();
-  if(!n||!e||!p||!pw){alert("Fill all");return;}
-  if(!e.endsWith("@gmail.com")){alert("Use Gmail only");return;}
-  if(p.length!==11||isNaN(p)){alert("Phone must be 11 digits");return;}
-  if(pw.length<4){alert("Password ≥4");return;}
-  if(localStorage.getItem("dingle_user")){alert("One account per device");return;}
+  <input id="username" placeholder="Full Name" />
+  <input id="email"    type="email"  placeholder="Gmail (must end with @gmail.com)" />
+  <input id="phone"    type="number" placeholder="Phone (11 digits)" />
+  <input id="pass"     type="password" placeholder="Password (≥4 chars)" />
+  
+  <button onclick="signup()">Sign Up</button>
 
-  const user={name:n,email:e,phone:p,password:pw,balance:20000};
-  localStorage.setItem("dingle_user",JSON.stringify(user));
-  alert("Signup success! Login now.");
-  location="login.html";
-}
-</script></body></html>
+  <div class="link">
+    <a href="login.html">Already have an account? Login</a>
+  </div>
+
+  <script>
+    function signup() {
+      const n  = document.getElementById("username").value.trim();
+      const e  = document.getElementById("email").value.trim();
+      const p  = document.getElementById("phone").value.trim();
+      const pw = document.getElementById("pass").value.trim();
+
+      if (!n || !e || !p || !pw) {
+        alert("❌ All fields are required");
+        return;
+      }
+      if (!e.endsWith("@gmail.com")) {
+        alert("❌ Must use Gmail");
+        return;
+      }
+      if (p.length !== 11 || isNaN(p)) {
+        alert("❌ Phone must be 11 digits");
+        return;
+      }
+      if (pw.length < 4) {
+        alert("❌ Password too short");
+        return;
+      }
+      if (localStorage.getItem("dingle_user")) {
+        alert("❌ One account per device only");
+        return;
+      }
+
+      const user = {
+        name: n,
+        email: e,
+        phone: p,
+        password: pw,
+        balance: 20000
+      };
+
+      localStorage.setItem("dingle_user", JSON.stringify(user));
+      alert("✅ Signup successful! Please login.");
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>
