@@ -6,42 +6,46 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Login – Dingle</title>
   <style>
-    html,body{margin:0;padding:0;width:100vw;height:100vh;font-family:Arial,sans-serif;
-      background:#ffffff;color:#222;font-size:18px;-webkit-text-size-adjust:100%;
-      text-size-adjust:100%;overflow:hidden}
-    .container{height:100%;display:flex;flex-direction:column;justify-content:center;
-      align-items:center;padding:20px;text-align:center}
-    h2{font-size:28px;margin-bottom:20px}
-    input{width:90%;max-width:350px;padding:12px;font-size:18px;margin-bottom:15px;
-      border:1px solid #ccc;border-radius:8px}
-    button{padding:12px 24px;font-size:18px;background:#004d00;color:#fff;border:none;
-      border-radius:8px;font-weight:bold;cursor:pointer}
+    body{font-family:Arial,sans-serif;padding:20px;background:#fff;font-size:18px}
+    h2{text-align:center}
+    input,button{width:100%;max-width:400px;padding:14px;margin:10px auto;
+      display:block;border-radius:10px;font-size:18px;border:1px solid #ccc}
+    button{background:#004d00;color:#fff;font-weight:bold;border:none;cursor:pointer}
     button:hover{background:#006600}
+    .link{text-align:center;margin-top:15px}
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Login to Dingle</h2>
-    <input id="phone" type="tel"      placeholder="11-digit Phone Number" />
-    <input id="password" type="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
-  </div>
 
-  <script>
-    function login(){
-      const phoneIn=document.getElementById('phone').value.trim();
-      const passIn =document.getElementById('password').value.trim();
-      const phone  =localStorage.getItem("dingle_phone");
-      const pass   =localStorage.getItem("dingle_password");
+<h2>Account Login</h2>
 
-      if(!/^\d{11}$/.test(phoneIn)){alert("Phone must be 11 digits.");return;}
-      if(passIn.length<4){alert("Password ≥ 4.");return;}
+<input id="phone" type="number" placeholder="Phone (11 digits)" />
+<input id="pass"  type="password" placeholder="Password" />
+<input id="code"  placeholder="Enter Dingle Code" />
 
-      if(phoneIn===phone && passIn===pass){
-        localStorage.setItem("dingle_loggedIn","true");
-        window.location.href="dashboard.html";
-      }else{ alert("Incorrect phone or password"); }
-    }
-  </script>
+<button onclick="login()">Login</button>
+<div class="link"><a href="signup.html">Need an account? Sign up</a></div>
+
+<script>
+const REQUIRED_CODE="dinglecooperative";
+
+function login(){
+  const phone=document.getElementById("phone").value.trim();
+  const pass =document.getElementById("pass").value.trim();
+  const code =document.getElementById("code").value.trim().toLowerCase();
+
+  if(!phone||!pass||!code){alert("❌ All fields required");return;}
+  if(phone.length!==11||isNaN(phone)){alert("❌ Phone must be 11 digits");return;}
+  if(code!==REQUIRED_CODE){alert("❌ Incorrect Dingle Code");return;}
+
+  const users=JSON.parse(localStorage.getItem("dingle_users")||"[]");
+  const user =users.find(u=>u.phone===phone && u.pass===pass);
+  if(!user){alert("❌ Wrong phone or password");return;}
+
+  localStorage.setItem("dingle_login",phone);
+  alert("✅ Login successful. Welcome back "+user.name);
+  window.location.href="dashboard.html";
+}
+</script>
 </body>
 </html>
