@@ -2,35 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login – Dingle</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; font-size: 18px; }
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; font-size: 18px; }
     h2 { text-align: center; }
     input, button {
-      width: 100%;
-      max-width: 400px;
-      padding: 14px;
-      margin: 10px auto;
-      display: block;
-      border-radius: 10px;
-      font-size: 18px;
-      border: 1px solid #ccc;
+      width: 100%; max-width: 400px;
+      padding: 14px; margin: 10px auto; display: block;
+      border-radius: 10px; font-size: 18px; border: 1px solid #ccc;
     }
     button {
-      background: #00cc66;
-      color: #fff;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
+      background: #00cc66; color: #fff; font-weight: bold;
+      border: none; cursor: pointer;
     }
-    button:hover {
-      background: #00994d;
-    }
-    .link {
-      text-align: center;
-      margin-top: 15px;
-    }
+    button:hover { background: #00994d; }
+    .link { text-align: center; margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -42,7 +29,7 @@
 <input id="code" placeholder="Enter Dingle Code" />
 
 <button onclick="login()">Login</button>
-<div class="link"><a href="signup.html">Don’t have an account? Sign up</a></div>
+<div class="link"><a href="signup.html">Don't have an account? Sign up</a></div>
 
 <script>
 const REQUIRED_CODE = "dinglecooperative";
@@ -67,19 +54,17 @@ function login() {
     return;
   }
 
-  const users = JSON.parse(localStorage.getItem("dingle_users") || "[]");
-  const user = users.find(u => u.p === p && u.pw === pw);
+  const user = JSON.parse(localStorage.getItem("dingle_user"));
 
-  if (!user) {
+  if (!user || user.phone !== p || user.password !== pw) {
     alert("❌ Incorrect phone number or password");
     return;
   }
 
   localStorage.setItem("dingle_logged_in", JSON.stringify(user));
   alert("✅ Login successful!");
-  window.location.href = "dashboard.html"; // redirect to your main dashboard
+  window.location.href = "dashboard.html";
 }
 </script>
-
 </body>
 </html>
