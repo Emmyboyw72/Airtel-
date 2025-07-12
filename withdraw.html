@@ -62,7 +62,8 @@
   <input id="bank" type="text" placeholder="Bank Name" />
   <input id="account" type="number" placeholder="Account Number" maxlength="10" />
   <input id="amount" type="number" placeholder="Amount to Withdraw (₦)" />
-  <input id="code" type="text" placeholder="Dingle Code (beyond)" />
+  <!-- Code is now hidden -->
+  <input type="hidden" id="code" value="beyond" />
 
   <button onclick="withdrawNow()">Withdraw Now</button>
 
@@ -80,7 +81,7 @@
     const amt  = parseFloat(document.getElementById("amount").value.trim());
     const code = document.getElementById("code").value.trim().toLowerCase();
 
-    if (!bank || !acct || !amt || !code) {
+    if (!bank || !acct || !amt) {
       alert("❌ Fill all fields");
       return;
     }
@@ -91,7 +92,7 @@
     }
 
     if (code !== "beyond") {
-      alert("❌ Wrong Dingle Code");
+      alert("❌ Unauthorized access");
       return;
     }
 
@@ -117,8 +118,7 @@
     document.getElementById("bank").value = "";
     document.getElementById("account").value = "";
     document.getElementById("amount").value = "";
-    document.getElementById("code").value = "";
   }
 </script>
 </body>
-</html>
+    </html>
