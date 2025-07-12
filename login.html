@@ -5,65 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login – Dingle</title>
   <style>
-    body { font-family: Arial; padding: 20px; background: #f4f4f4; font-size: 18px; }
-    h2 { text-align: center; }
-    input, button {
-      width: 100%; max-width: 400px;
-      padding: 14px; margin: 10px auto; display: block;
-      border-radius: 10px; font-size: 18px; border: 1px solid #ccc;
+    body {font-family:Arial;padding:20px;background:#f4f4f4;font-size:18px}
+    h2  {text-align:center}
+    input,button{
+      width:100%;max-width:400px;padding:14px;margin:10px auto;display:block;
+      border-radius:10px;font-size:18px;border:1px solid #ccc
     }
-    button {
-      background: #00cc66; color: #fff; font-weight: bold;
-      border: none; cursor: pointer;
-    }
-    button:hover { background: #00994d; }
-    .link { text-align: center; margin-top: 15px; }
+    button{background:#00cc66;color:#fff;font-weight:bold;border:none;cursor:pointer}
+    button:hover{background:#00994d}
+    .link{text-align:center;margin-top:15px}
   </style>
 </head>
 <body>
 
 <h2>Login</h2>
 
-<input id="phone" type="number" placeholder="Phone (11 digits)" />
-<input id="pass" type="password" placeholder="Password" />
-<input id="code" placeholder="Enter Dingle Code" />
+<input id="phone" type="number"   placeholder="Phone (11 digits)" />
+<input id="pass"  type="password" placeholder="Password" />
 
 <button onclick="login()">Login</button>
 <div class="link"><a href="signup.html">Don't have an account? Sign up</a></div>
 
 <script>
-const REQUIRED_CODE = "dinglecooperative";
-
 function login() {
-  const p = document.getElementById("phone").value.trim();
-  const pw = document.getElementById("pass").value.trim();
-  const c = document.getElementById("code").value.trim().toLowerCase();
+  const phone = document.getElementById("phone").value.trim();
+  const pwd   = document.getElementById("pass").value.trim();
 
-  if (!p || !pw || !c) {
-    alert("❌ All fields required");
-    return;
-  }
-
-  if (p.length !== 11 || isNaN(p)) {
-    alert("❌ Phone must be 11 digits");
-    return;
-  }
-
-  if (c !== REQUIRED_CODE) {
-    alert("❌ Incorrect Dingle Code");
-    return;
-  }
+  if (!phone||!pwd){alert("❌ All fields required");return;}
+  if (phone.length!==11 || isNaN(phone)){alert("❌ Phone must be 11 digits");return;}
 
   const user = JSON.parse(localStorage.getItem("dingle_user"));
 
-  if (!user || user.phone !== p || user.password !== pw) {
+  if (!user || user.phone!==phone || user.password!==pwd) {
     alert("❌ Incorrect phone number or password");
     return;
   }
 
   localStorage.setItem("dingle_logged_in", JSON.stringify(user));
   alert("✅ Login successful!");
-  window.location.href = "dashboard.html";
+  window.location.href = "dashboard.html";  // ✅ Redirects to dashboard
 }
 </script>
 </body>
