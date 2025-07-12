@@ -4,146 +4,92 @@
   <meta charset="UTF-8" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Buy Data – Dingle</title>
+  <title>Data – Dingle</title>
   <style>
-    html,body {
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #fdfdfd;
-      color: #111;
-      font-size: 18px;
-    }
-    h2 {
-      font-size: 26px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    input, select {
-      width: 100%;
-      max-width: 400px;
-      padding: 14px;
-      margin: 10px auto;
-      display: block;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 18px;
+    body { font-family: Arial; padding: 20px; background: #fff; font-size: 18px; }
+    h2 { text-align: center }
+    input, select, button {
+      width: 100%; max-width: 400px; padding: 14px; margin: 10px auto;
+      display: block; border-radius: 10px; font-size: 18px; border: 1px solid #ccc;
     }
     button {
-      width: 100%;
-      max-width: 400px;
-      padding: 14px;
-      margin: 20px auto;
-      display: block;
-      font-size: 20px;
-      background-color: #00cc66;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
+      background: #00cc66; color: #fff; font-weight: bold; border: none; cursor: pointer;
     }
-    button:hover {
-      background-color: #00994d;
-    }
-    .back a {
-      display: block;
-      text-align: center;
-      margin-top: 30px;
-      color: #00aa55;
-      font-weight: bold;
-      text-decoration: none;
-    }
+    button:hover { background: #00994d; }
   </style>
 </head>
 <body>
 
-<h2>Buy Data Bundle</h2>
+<h2>Buy Data</h2>
 
-<select id="network">
+<select id="net">
   <option value="">Select Network</option>
-  <option value="MTN">MTN</option>
-  <option value="Airtel">Airtel</option>
-  <option value="Glo">Glo</option>
-  <option value="9mobile">9mobile</option>
+  <option>MTN</option>
+  <option>Airtel</option>
+  <option>Glo</option>
+  <option>9mobile</option>
 </select>
 
-<select id="bundle">
-  <option value="">Select Data Bundle</option>
-  <option value="500MB-300">500MB – ₦300</option>
-  <option value="1GB-500">1GB – ₦500</option>
-  <option value="2GB-900">2GB – ₦900</option>
-  <option value="5GB-2000">5GB – ₦2000</option>
+<select id="bun">
+  <option value="">Select Bundle</option>
+  <option value="500MB-150">500MB – ₦150</option>
+  <option value="1GB-250">1GB – ₦250</option>
+  <option value="2GB-450">2GB – ₦450</option>
+  <option value="5GB-1000">5GB – ₦1000</option>
 </select>
 
-<input type="tel" id="phone" placeholder="Enter Phone Number" maxlength="11" />
-<input type="text" id="code" placeholder="Enter Dingle Code (beyond)" />
+<input id="num" type="number" placeholder="Phone number" />
+<input id="code" placeholder="Enter Dingle Code" />
 
-<button onclick="buyData()">Buy Data</button>
-
-<div class="back"><a href="dashboard.html">← Back to Dashboard</a></div>
+<button onclick="buy()">Buy Now</button>
 
 <script>
-  // Initialize balance if missing
-  if (localStorage.getItem("dingle_balance") === null) {
-    localStorage.setItem("dingle_balance", "20000");
+const CODE = "beyond";
+
+function buy() {
+  const net = document.getElementById("net").value;
+  const bun = document.getElementById("bun").value;
+  const num = document.getElementById("num").value.trim();
+  const code = document.getElementById("code").value.trim().toLowerCase();
+
+  if (!net || !bun || !num || !code) {
+    alert("❌ All fields required");
+    return;
   }
-  let balance = parseFloat(localStorage.getItem("dingle_balance"));
 
-  function buyData() {
-    const network = document.getElementById("network").value;
-    const bundle = document.getElementById("bundle").value;
-    const phone = document.getElementById("phone").value.trim();
-    const code = document.getElementById("code").value.trim().toLowerCase();
-
-    if (!network || !bundle || !phone || !code) {
-      alert("❌ Please fill in all fields.");
-      return;
-    }
-
-    if (phone.length !== 11 || isNaN(phone)) {
-      alert("❌ Phone number must be 11 digits.");
-      return;
-    }
-
-    if (code !== "beyond") {
-      alert("❌ Invalid Dingle Code.");
-      return;
-    }
-
-    const [dataLabel, amountStr] = bundle.split("-");
-    const amount = parseFloat(amountStr);
-
-    if (amount > balance) {
-      alert("❌ Insufficient balance.");
-      return;
-    }
-
-    // Deduct and save new balance
-    balance -= amount;
-    localStorage.setItem("dingle_balance", balance);
-
-    // Save to history
-    const history = JSON.parse(localStorage.getItem("dingle_history") || "[]");
-    const entry = {
-      type: "Data",
-      network,
-      bundle: dataLabel,
-      amount,
-      phone,
-      time: new Date().toLocaleString()
-    };
-    history.unshift(entry);
-    localStorage.setItem("dingle_history", JSON.stringify(history));
-
-    alert(`✅ ${dataLabel} on ${network} sent to ${phone}.\n₦${amount} deducted.\nNew Balance: ₦${balance}`);
-
-    // Clear inputs
-    document.getElementById("phone").value = "";
-    document.getElementById("code").value = "";
-    document.getElementById("bundle").selectedIndex = 0;
-    document.getElementById("network").selectedIndex = 0;
+  if (code !== CODE) {
+    alert("❌ Incorrect Dingle Code");
+    return;
   }
+
+  const amt = parseInt(bun.split("-")[1]);
+  const bundleName = bun.split("-")[0];
+  let bal = parseFloat(localStorage.getItem("dingle_balance") || "20000");
+
+  if (amt > bal) {
+    alert("❌ Not enough balance");
+    return;
+  }
+
+  bal -= amt;
+  localStorage.setItem("dingle_balance", bal);
+
+  const h = JSON.parse(localStorage.getItem("dingle_history") || "[]");
+  h.unshift({
+    type: "Data",
+    network: net,
+    phone: num,
+    bundle: bundleName,
+    amount: amt,
+    time: new Date().toLocaleString()
+  });
+  localStorage.setItem("dingle_history", JSON.stringify(h));
+
+  alert(`✅ ${bundleName} sent to ${num}\nNew balance: ₦${bal}`);
+  document.querySelectorAll("input").forEach(i => i.value = "");
+  document.getElementById("net").selectedIndex = 0;
+  document.getElementById("bun").selectedIndex = 0;
+}
 </script>
 
 </body>
