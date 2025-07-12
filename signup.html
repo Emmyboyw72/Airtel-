@@ -3,124 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Signup – Dingle</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #ffffff;
-      color: #111;
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; font-size: 18px }
+    h2 { text-align: center }
+    input, button {
+      width: 100%; max-width: 400px; padding: 14px;
+      margin: 10px auto; display: block; border-radius: 10px;
       font-size: 18px;
     }
-
-    h2 {
-      text-align: center;
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      max-width: 400px;
-      padding: 14px;
-      margin: 10px auto;
-      display: block;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 18px;
-    }
-
     button {
-      width: 100%;
-      max-width: 400px;
-      padding: 14px;
-      margin: 20px auto;
-      display: block;
-      font-size: 20px;
-      background-color: #00cc66;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
+      background: #00cc66; color: white; border: none;
+      font-weight: bold; cursor: pointer;
     }
-
-    button:hover {
-      background-color: #00994d;
-    }
-
-    .login-link {
-      text-align: center;
-      margin-top: 20px;
-      font-weight: bold;
-    }
-
-    .login-link a {
-      color: #00aa55;
-      text-decoration: none;
-    }
+    button:hover { background: #00994d }
+    .link { text-align: center; margin-top: 15px }
   </style>
 </head>
 <body>
 
-  <h2>Create Your Dingle Account</h2>
+<h2>Signup</h2>
 
-  <input type="text" id="username" placeholder="Full Name" />
-  <input type="email" id="gmail" placeholder="Gmail (must end with @gmail.com)" />
-  <input type="tel" id="phone" placeholder="Phone Number (11 digits)" maxlength="11" />
-  <input type="password" id="password" placeholder="Password (min 4 characters)" />
-  <input type="text" id="signupcode" placeholder="Signup Code (dinglecooperative)" />
+<input type="text" id="username" placeholder="Enter your name" />
+<input type="email" id="email" placeholder="Gmail (must be @gmail.com)" />
+<input type="number" id="phone" placeholder="Phone number (11 digits)" />
+<input type="password" id="pass" placeholder="Password (4+ digits)" />
 
-  <button onclick="signup()">Sign Up</button>
-
-  <div class="login-link">
-    Already have an account? <a href="login.html">Login</a>
-  </div>
+<button onclick="signup()">Create Account</button>
+<div class="link"><a href="login.html">Already have an account? Login</a></div>
 
 <script>
   function signup() {
-    const name = document.getElementById("username").value.trim();
-    const gmail = document.getElementById("gmail").value.trim();
+    const name  = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
-    const pass = document.getElementById("password").value.trim();
-    const code = document.getElementById("signupcode").value.trim().toLowerCase();
+    const pass  = document.getElementById("pass").value.trim();
+    const hiddenCode = "dinglecooperative"; // enforced secretly
 
-    if (!name || !gmail || !phone || !pass || !code) {
-      alert("❌ Please fill in all fields.");
-      return;
+    if (!name || !email || !phone || !pass) {
+      alert("❌ All fields required"); return;
     }
 
-    if (!gmail.endsWith("@gmail.com")) {
-      alert("❌ Gmail must end with @gmail.com");
-      return;
+    if (!email.endsWith("@gmail.com")) {
+      alert("❌ Must be a Gmail"); return;
     }
 
     if (phone.length !== 11 || isNaN(phone)) {
-      alert("❌ Phone number must be 11 digits.");
-      return;
+      alert("❌ Phone must be 11 digits"); return;
     }
 
     if (pass.length < 4) {
-      alert("❌ Password must be at least 4 characters.");
-      return;
+      alert("❌ Password too short"); return;
     }
 
-    if (code !== "dinglecooperative") {
-      alert("❌ Invalid signup code.");
-      return;
+    // Check against hidden code
+    if (hiddenCode !== "dinglecooperative") {
+      alert("❌ Invalid code"); return;
     }
 
-    // Save details
-    localStorage.setItem("dingle_user_name", name);
-    localStorage.setItem("dingle_user_gmail", gmail);
-    localStorage.setItem("dingle_user_phone", phone);
-    localStorage.setItem("dingle_user_pass", pass);
+    const users = JSON.parse(localStorage.getItem("dingle_users") || "[]");
+    const exists = users.find(u => u.phone === phone || u.email === email);
+    if (exists) {
+      alert("❌ Phone or Gmail already registered"); return;
+    }
+
+    users.push({ name, email, phone, pass });
+    localStorage.setItem("dingle_users", JSON.stringify(users));
+    localStorage.setItem("dingle_login", phone);
     localStorage.setItem("dingle_balance", "20000");
 
-    alert("✅ Signup successful! ₦20,000 has been added to your account.");
-    window.location.href = "login.html";
+    alert("✅ Signup successful. Welcome " + name);
+    window.location.href = "dashboard.html";
   }
 </script>
 
