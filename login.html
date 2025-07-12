@@ -2,50 +2,84 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Login – Dingle</title>
   <style>
-    body{font-family:Arial,sans-serif;padding:20px;background:#fff;font-size:18px}
-    h2{text-align:center}
-    input,button{width:100%;max-width:400px;padding:14px;margin:10px auto;
-      display:block;border-radius:10px;font-size:18px;border:1px solid #ccc}
-    button{background:#004d00;color:#fff;font-weight:bold;border:none;cursor:pointer}
-    button:hover{background:#006600}
-    .link{text-align:center;margin-top:15px}
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; font-size: 18px; }
+    h2 { text-align: center; }
+    input, button {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 10px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #00cc66;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00994d;
+    }
+    .link {
+      text-align: center;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
 
-<h2>Account Login</h2>
+<h2>Login</h2>
 
 <input id="phone" type="number" placeholder="Phone (11 digits)" />
-<input id="pass"  type="password" placeholder="Password" />
-<input id="code"  placeholder="Enter Dingle Code" />
+<input id="pass" type="password" placeholder="Password" />
+<input id="code" placeholder="Enter Dingle Code" />
 
 <button onclick="login()">Login</button>
-<div class="link"><a href="signup.html">Need an account? Sign up</a></div>
+<div class="link"><a href="signup.html">Don’t have an account? Sign up</a></div>
 
 <script>
-const REQUIRED_CODE="dinglecooperative";
+const REQUIRED_CODE = "dinglecooperative";
 
-function login(){
-  const phone=document.getElementById("phone").value.trim();
-  const pass =document.getElementById("pass").value.trim();
-  const code =document.getElementById("code").value.trim().toLowerCase();
+function login() {
+  const p = document.getElementById("phone").value.trim();
+  const pw = document.getElementById("pass").value.trim();
+  const c = document.getElementById("code").value.trim().toLowerCase();
 
-  if(!phone||!pass||!code){alert("❌ All fields required");return;}
-  if(phone.length!==11||isNaN(phone)){alert("❌ Phone must be 11 digits");return;}
-  if(code!==REQUIRED_CODE){alert("❌ Incorrect Dingle Code");return;}
+  if (!p || !pw || !c) {
+    alert("❌ All fields required");
+    return;
+  }
 
-  const users=JSON.parse(localStorage.getItem("dingle_users")||"[]");
-  const user =users.find(u=>u.phone===phone && u.pass===pass);
-  if(!user){alert("❌ Wrong phone or password");return;}
+  if (p.length !== 11 || isNaN(p)) {
+    alert("❌ Phone must be 11 digits");
+    return;
+  }
 
-  localStorage.setItem("dingle_login",phone);
-  alert("✅ Login successful. Welcome back "+user.name);
-  window.location.href="dashboard.html";
+  if (c !== REQUIRED_CODE) {
+    alert("❌ Incorrect Dingle Code");
+    return;
+  }
+
+  const users = JSON.parse(localStorage.getItem("dingle_users") || "[]");
+  const user = users.find(u => u.p === p && u.pw === pw);
+
+  if (!user) {
+    alert("❌ Incorrect phone number or password");
+    return;
+  }
+
+  localStorage.setItem("dingle_logged_in", JSON.stringify(user));
+  alert("✅ Login successful!");
+  window.location.href = "dashboard.html"; // redirect to your main dashboard
 }
 </script>
+
 </body>
 </html>
