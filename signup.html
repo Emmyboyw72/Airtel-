@@ -24,29 +24,22 @@
 <input id="email"    type="email"  placeholder="Gmail (must end with @gmail.com)" />
 <input id="phone"    type="number" placeholder="Phone (11 digits)" />
 <input id="pass"     type="password" placeholder="Password (≥4 chars)" />
-<input id="code"     placeholder="Enter Dingle Code" />
 
 <button onclick="signup()">Sign Up</button>
 <div class="link"><a href="login.html">Already have an account? Login</a></div>
 
 <script>
-const REQUIRED_CODE = "dinglecooperative";
-
 function signup() {
   const name  = document.getElementById("username").value.trim();
   const email = document.getElementById("email").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const pwd   = document.getElementById("pass").value.trim();
-  const code  = document.getElementById("code").value.trim().toLowerCase();
 
-  // Basic validation
-  if (!name||!email||!phone||!pwd||!code){alert("❌ All fields required");return;}
-  if (!email.endsWith("@gmail.com"))      {alert("❌ Must use Gmail");return;}
-  if (phone.length!==11 || isNaN(phone))  {alert("❌ Phone must be 11 digits");return;}
-  if (pwd.length<4)                       {alert("❌ Password too short");return;}
-  if (code!==REQUIRED_CODE)               {alert("❌ Incorrect Dingle Code");return;}
+  if (!name||!email||!phone||!pwd){alert("❌ All fields required");return;}
+  if (!email.endsWith("@gmail.com")) {alert("❌ Must use Gmail");return;}
+  if (phone.length!==11 || isNaN(phone)){alert("❌ Phone must be 11 digits");return;}
+  if (pwd.length<4) {alert("❌ Password too short");return;}
 
-  // Enforce one account per device
   if (localStorage.getItem("dingle_user")) {
     alert("❌ Only one account allowed on this device");
     return;
@@ -55,7 +48,7 @@ function signup() {
   const user = { name, email, phone, password: pwd, balance: 20000 };
   localStorage.setItem("dingle_user", JSON.stringify(user));
   alert("✅ Signup successful! Please login.");
-  window.location.href = "login.html";
+  window.location.href = "login.html";  // 🔁 Redirects to login
 }
 </script>
 </body>
