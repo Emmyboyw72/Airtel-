@@ -6,104 +6,57 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Signup – Dingle</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f4f4f4;
-      font-size: 18px;
-    }
-    h2 {
-      text-align: center;
-    }
-    input, button {
-      width: 100%;
-      max-width: 400px;
-      padding: 14px;
-      margin: 10px auto;
-      display: block;
-      border-radius: 10px;
-      font-size: 18px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background: #00cc66;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-    }
-    button:hover {
-      background: #00994d;
-    }
-    .link {
-      text-align: center;
-      margin-top: 15px;
-    }
+    body{font-family:Arial,sans-serif;padding:20px;background:#f6f6f6;font-size:18px}
+    h2{text-align:center}
+    input,button{width:100%;max-width:400px;padding:14px;margin:10px auto;
+      display:block;border-radius:10px;font-size:18px;border:1px solid #ccc}
+    button{background:#00cc66;color:#fff;font-weight:bold;border:none;cursor:pointer}
+    button:hover{background:#00994d}
+    .link{text-align:center;margin-top:15px}
   </style>
 </head>
 <body>
 
-  <h2>Signup</h2>
+<h2>Create Account</h2>
 
-  <input type="text" id="username" placeholder="Enter your name" />
-  <input type="email" id="email" placeholder="Gmail (must be @gmail.com)" />
-  <input type="number" id="phone" placeholder="Phone number (11 digits)" />
-  <input type="password" id="pass" placeholder="Password (4+ digits)" />
+<input id="username"   placeholder="Full Name" />
+<input id="email"      type="email"  placeholder="Gmail (must be @gmail.com)" />
+<input id="phone"      type="number" placeholder="Phone (11 digits)" />
+<input id="pass"       type="password" placeholder="Password (≥4 chars)" />
+<input id="code"       placeholder="Enter Dingle Code" />
 
-  <button onclick="signup()">Create Account</button>
-  <div class="link"><a href="login.html">Already have an account? Login</a></div>
+<button onclick="signup()">Sign Up</button>
+<div class="link"><a href="login.html">Have an account? Login</a></div>
 
-  <script>
-    function signup() {
-      const name  = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const pass  = document.getElementById("pass").value.trim();
+<script>
+const REQUIRED_CODE="dinglecooperative";
 
-      const hiddenCode = "dinglecooperative"; // enforced secretly
+function signup(){
+  const name=document.getElementById("username").value.trim();
+  const email=document.getElementById("email").value.trim();
+  const phone=document.getElementById("phone").value.trim();
+  const pass=document.getElementById("pass").value.trim();
+  const code=document.getElementById("code").value.trim().toLowerCase();
 
-      if (!name || !email || !phone || !pass) {
-        alert("❌ All fields required");
-        return;
-      }
+  if(!name||!email||!phone||!pass||!code){alert("❌ All fields required");return;}
+  if(!email.endsWith("@gmail.com")){alert("❌ Must use Gmail");return;}
+  if(phone.length!==11||isNaN(phone)){alert("❌ Phone must be 11 digits");return;}
+  if(pass.length<4){alert("❌ Password too short");return;}
+  if(code!==REQUIRED_CODE){alert("❌ Incorrect Dingle Code");return;}
 
-      if (!email.endsWith("@gmail.com")) {
-        alert("❌ Must be a Gmail");
-        return;
-      }
+  const users=JSON.parse(localStorage.getItem("dingle_users")||"[]");
+  if(users.some(u=>u.phone===phone||u.email===email)){
+    alert("❌ Phone or Gmail already registered");return;
+  }
 
-      if (phone.length !== 11 || isNaN(phone)) {
-        alert("❌ Phone must be 11 digits");
-        return;
-      }
+  users.push({name,email,phone,pass});
+  localStorage.setItem("dingle_users",JSON.stringify(users));
+  localStorage.setItem("dingle_login",phone);
+  localStorage.setItem("dingle_balance","20000");
 
-      if (pass.length < 4) {
-        alert("❌ Password too short");
-        return;
-      }
-
-      // secretly check required hidden code
-      if (hiddenCode !== "dinglecooperative") {
-        alert("❌ Unauthorized access");
-        return;
-      }
-
-      const users = JSON.parse(localStorage.getItem("dingle_users") || "[]");
-      const exists = users.find(u => u.phone === phone || u.email === email);
-      if (exists) {
-        alert("❌ Phone or Gmail already registered");
-        return;
-      }
-
-      users.push({ name, email, phone, pass });
-      localStorage.setItem("dingle_users", JSON.stringify(users));
-      localStorage.setItem("dingle_login", phone);
-      localStorage.setItem("dingle_balance", "20000");
-
-      alert("✅ Signup successful. Welcome " + name);
-      window.location.href = "dashboard.html";
-    }
-  </script>
-
+  alert("✅ Signup successful! Welcome "+name);
+  window.location.href="dashboard.html";
+}
+</script>
 </body>
 </html>
