@@ -14,9 +14,6 @@
       background-color: #004d00;
       font-family: Arial, sans-serif;
       color: white;
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-      font-size: 20px;
       overflow: hidden;
     }
 
@@ -28,6 +25,8 @@
       height: 100%;
       text-align: center;
       padding: 20px;
+      opacity: 1;
+      transition: opacity 1.2s ease-in-out;
     }
 
     h1 {
@@ -39,28 +38,24 @@
       font-size: 22px;
       margin-bottom: 40px;
     }
-
-    .enter-btn {
-      background-color: #00cc66;
-      color: white;
-      font-size: 22px;
-      padding: 16px 36px;
-      text-decoration: none;
-      border-radius: 12px;
-      font-weight: bold;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .enter-btn:hover {
-      background-color: #00b359;
-    }
   </style>
+
+  <script>
+    window.onload = () => {
+      setTimeout(() => {
+        document.querySelector(".wrapper").style.opacity = 0;
+        setTimeout(() => {
+          window.location.href = "signup.html"; // redirect here
+        }, 1200);
+      }, 3000); // wait 3 seconds before fading
+    };
+  </script>
 </head>
+
 <body>
   <div class="wrapper">
     <h1>Welcome to Dingle</h1>
     <p>Get ₦20,000 signup bonus and start earning instantly!</p>
-    <a href="dashboard.html" class="enter-btn">Enter Dashboard</a>
   </div>
 </body>
 </html>
