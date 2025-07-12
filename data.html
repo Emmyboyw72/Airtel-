@@ -1,94 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Dingle – Buy Data</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Buy Data – Dingle</title>
   <style>
-    body{background:#e0fff1;font-family:Arial;text-align:center;padding:30px}
-    .box{background:#fff;padding:25px;border-radius:12px;max-width:360px;margin:auto;
-         box-shadow:0 2px 8px rgba(0,0,0,.1)}
-    h2{color:#00b75a;margin-bottom:20px}
-    input,select,button{width:100%;padding:12px;margin:10px 0;font-size:15px;
-         border-radius:8px;border:1px solid #ccc}
-    button{background:#00b75a;color:#fff;font-weight:bold;border:none}
-    button:hover{background:#019a4c}
-    .msg{margin-top:10px;font-weight:bold}
-    .error{color:#d00000}.success{color:#007d40}
-    a{display:block;margin-top:15px;color:#00b75a;text-decoration:none}
+    html,body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #fdfdfd;
+      color: #111;
+      font-size: 18px;
+    }
+    h2 {
+      font-size: 26px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, select {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 18px;
+    }
+    button {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px;
+      margin: 20px auto;
+      display: block;
+      font-size: 20px;
+      background-color: #00cc66;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00994d;
+    }
+    .back a {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+      color: #00aa55;
+      font-weight: bold;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
 
-  <div class="box">
-    <h2>📶 Buy Data</h2>
+<h2>Buy Data Bundle</h2>
 
-    <select id="network">
-      <option value="">-- Select Network --</option>
-      <option value="MTN">MTN</option>
-      <option value="Airtel">Airtel</option>
-      <option value="Glo">Glo</option>
-      <option value="9mobile">9mobile</option>
-    </select>
+<select id="network">
+  <option value="">Select Network</option>
+  <option value="MTN">MTN</option>
+  <option value="Airtel">Airtel</option>
+  <option value="Glo">Glo</option>
+  <option value="9mobile">9mobile</option>
+</select>
 
-    <select id="bundle" onchange="setPrice()">
-      <option value="">-- Select Data Bundle --</option>
-      <option value="500:300">500 MB – ₦300</option>
-      <option value="1024:500">1 GB – ₦500</option>
-      <option value="2048:900">2 GB – ₦900</option>
-      <option value="5120:2000">5 GB – ₦2,000</option>
-    </select>
+<select id="bundle">
+  <option value="">Select Data Bundle</option>
+  <option value="500MB-300">500MB – ₦300</option>
+  <option value="1GB-500">1GB – ₦500</option>
+  <option value="2GB-900">2GB – ₦900</option>
+  <option value="5GB-2000">5GB – ₦2000</option>
+</select>
 
-    <input id="price" type="number" placeholder="Price (₦)" readonly>
-    <input id="phone" type="tel" placeholder="Phone Number">
-    <input id="code" type="text" placeholder="Dingle Code">
-    <input id="pin" type="password" maxlength="4" placeholder="Your PIN">
+<input type="tel" id="phone" placeholder="Enter Phone Number" maxlength="11" />
+<input type="text" id="code" placeholder="Enter Dingle Code (beyond)" />
 
-    <button onclick="buyData()">Buy Now</button>
-    <div id="msg" class="msg"></div>
-    <a href="dashboard.html">← Back to Dashboard</a>
-  </div>
+<button onclick="buyData()">Buy Data</button>
+
+<div class="back"><a href="dashboard.html">← Back to Dashboard</a></div>
 
 <script>
-const LS = localStorage;
-let user = JSON.parse(LS.getItem("dingle_user")||"{}");
-if(!user.name){location.href="signup.html";}
+  // Initialize balance if missing
+  if (localStorage.getItem("dingle_balance") === null) {
+    localStorage.setItem("dingle_balance", "20000");
+  }
+  let balance = parseFloat(localStorage.getItem("dingle_balance"));
 
-function setPrice(){
-  const val=document.getElementById("bundle").value;
-  document.getElementById("price").value = val ? val.split(":")[1] : "";
-}
+  function buyData() {
+    const network = document.getElementById("network").value;
+    const bundle = document.getElementById("bundle").value;
+    const phone = document.getElementById("phone").value.trim();
+    const code = document.getElementById("code").value.trim().toLowerCase();
 
-function buyData(){
-  const net=document.getElementById("network").value;
-  const bundle=document.getElementById("bundle").value;
-  const price=+document.getElementById("price").value;
-  const phone=document.getElementById("phone").value.trim();
-  const code=document.getElementById("code").value.trim();
-  const pin=document.getElementById("pin").value.trim();
-  const msg=document.getElementById("msg");
+    if (!network || !bundle || !phone || !code) {
+      alert("❌ Please fill in all fields.");
+      return;
+    }
 
-  if(!net||!bundle||!price||!phone||!code||!pin){
-    msg.textContent="❌ All fields are required.";msg.className="msg error";return;}
-  if(code!=="beyond"){msg.textContent="❌ Invalid Dingle Code.";msg.className="msg error";return;}
-  if(pin!==user.pin){msg.textContent="❌ Incorrect PIN.";msg.className="msg error";return;}
-  if(user.balance<price){msg.textContent="❌ Insufficient balance.";msg.className="msg error";return;}
+    if (phone.length !== 11 || isNaN(phone)) {
+      alert("❌ Phone number must be 11 digits.");
+      return;
+    }
 
-  user.balance-=price; LS.setItem("dingle_user",JSON.stringify(user));
+    if (code !== "beyond") {
+      alert("❌ Invalid Dingle Code.");
+      return;
+    }
 
-  const hist=JSON.parse(LS.getItem("dingle_hist")||"[]");
-  const size=bundle.split(":")[0];
-  hist.push({time:new Date().toLocaleString(),text:`Data ${size}MB ₦${price} to ${phone} (${net})`});
-  LS.setItem("dingle_hist",JSON.stringify(hist));
+    const [dataLabel, amountStr] = bundle.split("-");
+    const amount = parseFloat(amountStr);
 
-  msg.textContent=`✅ ${size}MB data sent to ${phone} on ${net}`;msg.className="msg success";
+    if (amount > balance) {
+      alert("❌ Insufficient balance.");
+      return;
+    }
 
-  // reset
-  ["network","bundle"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("price").value="";
-  document.getElementById("phone").value="";
-  document.getElementById("code").value="";
-  document.getElementById("pin").value="";
-}
+    // Deduct and save new balance
+    balance -= amount;
+    localStorage.setItem("dingle_balance", balance);
+
+    // Save to history
+    const history = JSON.parse(localStorage.getItem("dingle_history") || "[]");
+    const entry = {
+      type: "Data",
+      network,
+      bundle: dataLabel,
+      amount,
+      phone,
+      time: new Date().toLocaleString()
+    };
+    history.unshift(entry);
+    localStorage.setItem("dingle_history", JSON.stringify(history));
+
+    alert(`✅ ${dataLabel} on ${network} sent to ${phone}.\n₦${amount} deducted.\nNew Balance: ₦${balance}`);
+
+    // Clear inputs
+    document.getElementById("phone").value = "";
+    document.getElementById("code").value = "";
+    document.getElementById("bundle").selectedIndex = 0;
+    document.getElementById("network").selectedIndex = 0;
+  }
 </script>
 
 </body>
