@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dingle – Persistent Trade</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #eafff2;
+      text-align: center;
+      padding: 20px;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 14px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 { color: #00b75a; }
+    canvas {
+      background: #fff;
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+    .btn {
+      padding: 12px 20px;
+      font-size: 16px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .stake { background: #00b75a; }
+    .withdraw { background: #e00000; }
+    #msg { font-weight: bold; margin-top: 10px; }
+    a { display: block; margin-top: 20px; color: #00b75a; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>📈 Auto Trading</h2>
+    <canvas id="chart" width="350" height="150"></canvas>
+
+    <p>Balance: ₦<span id="balance">--</span></p>
+    <p>Trade Wallet: ₦<span id="trade">0</span></p>
+
+    <button class="btn stake" onclick="stake()" id="stakeBtn">Stake ₦1000</button>
+    <button class="btn withdraw" onclick="withdraw()" id="withdrawBtn">Withdraw</button>
+
+    <div id="msg"></div>
+    <a href="dashboard.html">← Back to Dashboard</a>
+  </div>
+
+  <script>
+    const chart = document.getElementById("chart");
+    const ctx = chart.getContext("2d");
+
+    const LS = localStorage;
+    let user = JSON.parse(LS.getItem("dingle_user") || "{}");
+    if (!user.name) location.href = "signup.html";
+
+    user.balance = user.balance || 20000;
+    user.trade = user.trade || 0;
+
+    let tradeData = [100];
+    let tradeStartTime = parseFloat(LS.getItem("dingle_trade_start") || "0");
+    let tradeInterval;
+
+    function updateUI() {
+      document.getElementById("balance").textContent = user.balance.toLocaleString();
+      document.getElementById("trade").textContent = Math.round(user.trade).toLocaleString();
+      document.getElementById("stakeBtn").disabled = user.trade > 0;
+      document.getElementById("withdrawBtn").disabled = user.trade <= 0;
+      LS.setItem("dingle_user", JSON.stringify(user));
+    }
+
+    function drawChart() {
+      ctx.clearRect(0, 0, chart.width, chart.height);
+      ctx.beginPath();
+      ctx.moveTo(0, 150 - tradeData[0]);
+      for (let i = 1; i < tradeData.length; i++) {
+        ctx.lineTo(i * 4, 150 - tradeData[i]);
+      }
+      ctx.strokeStyle = "#00b75a";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function simulateTradeValue() {
+      if (user.trade > 0) {
+        const secondsPassed = (Date.now() - tradeStartTime) / 1000;
+        const fluctuation = (Math.random() * 0.1 - 0.05) * user.trade;
+        user.trade += fluctuation;
+        updateUI();
+      }
+    }
+
+    function updateChart() {
+      if (tradeData.length >= 90) tradeData.shift();
+      let last = tradeData[tradeData.length - 1];
+      let change = Math.floor(Math.random() * 31) - 15;
+      let next = last + change;
+      if (next < 10) next = 10;
+      if (next > 140) next = 140;
+      tradeData.push(next);
+      simulateTradeValue();
+      drawChart();
+    }
+
+    tradeInterval = setInterval(updateChart, 5000);
+
+    function stake() {
+      if (user.balance < 1000) {
+        showMsg("❌ Not enough balance", "red");
+        return;
+      }
+      if (user.trade > 0) {
+        showMsg("❌ You're already in a trade", "red");
+        return;
+      }
+      user.balance -= 1000;
+      user.trade = 1000;
+      tradeStartTime = Date.now();
+      LS.setItem("dingle_trade_start", tradeStartTime);
+      showMsg("✅ Trade started", "green");
+      updateUI();
+    }
+
+    function withdraw() {
+      if (user.trade <= 0) {
+        showMsg("❌ No trade running", "red");
+        return;
+      }
+
+      const earned = Math.round(user.trade);
+      const profit = earned - 1000;
+      const result = profit >= 0 ? "WIN" : "LOSS";
+
+      user.balance += earned;
+      user.trade = 0;
+      LS.removeItem("dingle_trade_start");
+
+      saveTradeHistory(result, earned);
+      showMsg(`✅ You ${result}: ₦${earned}`, result === "WIN" ? "green" : "red");
+      updateUI();
+    }
+
+    function saveTradeHistory(result, amount) {
+      const hist = JSON.parse(LS.getItem("dingle_hist") || "[]");
+      hist.push({
+        time: new Date().toLocaleString(),
+        text: `Trade ${result}: ₦${amount}`
+      });
+      LS.setItem("dingle_hist", JSON.stringify(hist));
+    }
+
+    function showMsg(msg, color) {
+      const el = document.getElementById("msg");
+      el.textContent = msg;
+      el.style.color = color;
+    }
+
+    // Resume if previous trade was running
+    if (user.trade > 0 && tradeStartTime > 0) {
+      simulateTradeValue();
+    }
+
+    updateUI();
+    drawChart();
+  </script>
+
+</body>
+</html>

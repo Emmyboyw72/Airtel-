@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dingle – Buy Code</title>
+  <style>
+    body {
+      background: #e8fff1;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .box {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      max-width: 360px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #00b75a;
+      margin-bottom: 15px;
+    }
+
+    .details {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      text-align: left;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      font-size: 15px;
+      background: #00b75a;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #019a4c;
+    }
+
+    .msg {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .pending {
+      color: #d17e00;
+    }
+
+    .success {
+      color: #007d40;
+    }
+
+    a {
+      display: block;
+      margin-top: 15px;
+      color: #00b75a;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>💳 Buy Code</h2>
+
+  <div class="details" id="acctInfo">
+    <strong>Send ₦7,000 to:</strong><br><br>
+    Account Number: <b>8124890070</b><br>
+    Bank: <b>Opay</b><br>
+    Name: <b>Godswill Emmanuel Chukwuemeka</b>
+  </div>
+
+  <button onclick="copyDetails()">📋 Copy Account Details</button>
+  <button onclick="markPayment()">✅ I Have Made Payment</button>
+
+  <div id="msg" class="msg"></div>
+  <a href="dashboard.html">← Back to Dashboard</a>
+</div>
+
+<script>
+  const LS = localStorage;
+  let user = JSON.parse(LS.getItem("dingle_user") || "{}");
+
+  if (!user || !user.name) {
+    window.location.href = "signup.html";
+  }
+
+  function copyDetails() {
+    const info = `Send ₦7,000 to:\nAccount Number: 8124890070\nBank: Opay\nName: Godswill Emmanuel Chukwuemeka`;
+    navigator.clipboard.writeText(info).then(() => {
+      document.getElementById("msg").textContent = "✅ Account details copied!";
+      document.getElementById("msg").className = "msg success";
+    });
+  }
+
+  function markPayment() {
+    document.getElementById("msg").textContent = "⏳ Payment pending. Not confirmed yet. Please hold on.";
+    document.getElementById("msg").className = "msg pending";
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dingle – Sign Up</title>
+  <style>
+    body {
+      background: #e0fff4;
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .box {
+      background: white;
+      padding: 25px;
+      max-width: 360px;
+      margin: auto;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #00b75a;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #00b75a;
+      color: white;
+      font-weight: bold;
+      border: none;
+    }
+
+    button:hover {
+      background: #019a4c;
+    }
+
+    .msg {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .error { color: red; }
+    .success { color: green; }
+
+    a {
+      display: block;
+      margin-top: 10px;
+      color: #00b75a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>Sign Up to Dingle</h2>
+    <input id="name" type="text" placeholder="Full Name">
+    <input id="phone" type="tel" placeholder="Phone Number">
+    <input id="pin" type="password" placeholder="4-digit PIN" maxlength="4">
+    <button onclick="signup()">Sign Up</button>
+
+    <div class="msg" id="msg"></div>
+    <a href="login.html">Already have account? Login</a>
+  </div>
+
+  <script>
+    const LS = localStorage;
+    const existingUser = LS.getItem("dingle_user");
+    const msg = document.getElementById("msg");
+
+    if (existingUser) {
+      msg.textContent = "❌ You already signed up on this device.";
+      msg.className = "msg error";
+    }
+
+    function signup() {
+      if (existingUser) {
+        msg.textContent = "❌ Only one account allowed per device.";
+        msg.className = "msg error";
+        return;
+      }
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+
+      if (!name || !phone || !pin) {
+        msg.textContent = "❌ All fields are required.";
+        msg.className = "msg error";
+        return;
+      }
+
+      if (pin.length !== 4) {
+        msg.textContent = "❌ PIN must be 4 digits.";
+        msg.className = "msg error";
+        return;
+      }
+
+      const phoneList = JSON.parse(LS.getItem("dingle_users_list") || "[]");
+      if (phoneList.includes(phone)) {
+        msg.textContent = "❌ Phone number already used.";
+        msg.className = "msg error";
+        return;
+      }
+
+      // ✅ Create new user with DINGLE CODE = "beyond"
+      const user = {
+        name,
+        phone,
+        pin,
+        balance: 20000,
+        code: "beyond",
+        btc: 0,
+        eth: 0,
+        trade: 0
+      };
+
+      phoneList.push(phone);
+      LS.setItem("dingle_user", JSON.stringify(user));
+      LS.setItem("dingle_users_list", JSON.stringify(phoneList));
+
+      msg.textContent = "✅ Account created! Redirecting...";
+      msg.className = "msg success";
+      setTimeout(() => location.href = "dashboard.html", 1500);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dingle – Login</title>
+  <style>
+    body {
+      background: #e8fff1;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 350px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #00b75a;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #00b75a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #019a4c;
+    }
+
+    .link {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .link a {
+      color: #00b75a;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Login to Dingle</h2>
+    <input id="phone" type="text" placeholder="Phone Number" required>
+    <input id="pin" type="password" placeholder="4-digit PIN" maxlength="4" required>
+    <button onclick="login()">Login</button>
+    <div class="link">Don’t have an account? <a href="signup.html">Sign up</a></div>
+  </div>
+
+  <script>
+    function login() {
+      const phone = document.getElementById("phone").value;
+      const pin = document.getElementById("pin").value;
+
+      const user = JSON.parse(localStorage.getItem("dingle_user"));
+      if (user && user.phone === phone && user.pin === pin) {
+        window.location.href = "dashboard.html";
+      } else {
+        alert("Incorrect phone or PIN.");
+      }
+    }
+  </script>
+</body>
+</html>

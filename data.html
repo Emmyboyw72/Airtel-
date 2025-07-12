@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dingle – Buy Data</title>
+  <style>
+    body{background:#e0fff1;font-family:Arial;text-align:center;padding:30px}
+    .box{background:#fff;padding:25px;border-radius:12px;max-width:360px;margin:auto;
+         box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    h2{color:#00b75a;margin-bottom:20px}
+    input,select,button{width:100%;padding:12px;margin:10px 0;font-size:15px;
+         border-radius:8px;border:1px solid #ccc}
+    button{background:#00b75a;color:#fff;font-weight:bold;border:none}
+    button:hover{background:#019a4c}
+    .msg{margin-top:10px;font-weight:bold}
+    .error{color:#d00000}.success{color:#007d40}
+    a{display:block;margin-top:15px;color:#00b75a;text-decoration:none}
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>📶 Buy Data</h2>
+
+    <select id="network">
+      <option value="">-- Select Network --</option>
+      <option value="MTN">MTN</option>
+      <option value="Airtel">Airtel</option>
+      <option value="Glo">Glo</option>
+      <option value="9mobile">9mobile</option>
+    </select>
+
+    <select id="bundle" onchange="setPrice()">
+      <option value="">-- Select Data Bundle --</option>
+      <option value="500:300">500 MB – ₦300</option>
+      <option value="1024:500">1 GB – ₦500</option>
+      <option value="2048:900">2 GB – ₦900</option>
+      <option value="5120:2000">5 GB – ₦2,000</option>
+    </select>
+
+    <input id="price" type="number" placeholder="Price (₦)" readonly>
+    <input id="phone" type="tel" placeholder="Phone Number">
+    <input id="code" type="text" placeholder="Dingle Code">
+    <input id="pin" type="password" maxlength="4" placeholder="Your PIN">
+
+    <button onclick="buyData()">Buy Now</button>
+    <div id="msg" class="msg"></div>
+    <a href="dashboard.html">← Back to Dashboard</a>
+  </div>
+
+<script>
+const LS = localStorage;
+let user = JSON.parse(LS.getItem("dingle_user")||"{}");
+if(!user.name){location.href="signup.html";}
+
+function setPrice(){
+  const val=document.getElementById("bundle").value;
+  document.getElementById("price").value = val ? val.split(":")[1] : "";
+}
+
+function buyData(){
+  const net=document.getElementById("network").value;
+  const bundle=document.getElementById("bundle").value;
+  const price=+document.getElementById("price").value;
+  const phone=document.getElementById("phone").value.trim();
+  const code=document.getElementById("code").value.trim();
+  const pin=document.getElementById("pin").value.trim();
+  const msg=document.getElementById("msg");
+
+  if(!net||!bundle||!price||!phone||!code||!pin){
+    msg.textContent="❌ All fields are required.";msg.className="msg error";return;}
+  if(code!=="beyond"){msg.textContent="❌ Invalid Dingle Code.";msg.className="msg error";return;}
+  if(pin!==user.pin){msg.textContent="❌ Incorrect PIN.";msg.className="msg error";return;}
+  if(user.balance<price){msg.textContent="❌ Insufficient balance.";msg.className="msg error";return;}
+
+  user.balance-=price; LS.setItem("dingle_user",JSON.stringify(user));
+
+  const hist=JSON.parse(LS.getItem("dingle_hist")||"[]");
+  const size=bundle.split(":")[0];
+  hist.push({time:new Date().toLocaleString(),text:`Data ${size}MB ₦${price} to ${phone} (${net})`});
+  LS.setItem("dingle_hist",JSON.stringify(hist));
+
+  msg.textContent=`✅ ${size}MB data sent to ${phone} on ${net}`;msg.className="msg success";
+
+  // reset
+  ["network","bundle"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("price").value="";
+  document.getElementById("phone").value="";
+  document.getElementById("code").value="";
+  document.getElementById("pin").value="";
+}
+</script>
+
+</body>
+</html>

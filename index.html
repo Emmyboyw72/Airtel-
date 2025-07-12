@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to Dingle</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #0a0a23;
+      color: white;
+      font-family: Arial Black, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      animation: pop 2s ease-out, fadeOut 1s ease-in 3s forwards;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; transform: scale(0.8); }
+    }
+  </style>
+</head>
+<body>
+  <h1>✨ Welcome to Dingle ✨</h1>
+
+  <script>
+    setTimeout(function() {
+      window.location.href = "signup.html"; // redirect after animation
+    }, 4000); // 4 seconds
+  </script>
+</body>
+</html>

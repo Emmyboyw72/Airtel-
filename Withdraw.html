@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dingle – Withdraw</title>
+  <style>
+    body {
+      background: #e8fff1;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .box {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      max-width: 360px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #00b75a;
+      margin-bottom: 15px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    input, select {
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #00b75a;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #019a4c;
+    }
+
+    .msg {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #d00000;
+    }
+
+    .success {
+      color: #007d40;
+    }
+
+    a {
+      display: block;
+      margin-top: 15px;
+      color: #00b75a;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>🏦 Withdraw Funds</h2>
+    <input id="accname" type="text" placeholder="Account Name">
+    <input id="accnum" type="text" maxlength="10" placeholder="Account Number">
+    
+    <select id="bank">
+      <option value="">-- Select Bank --</option>
+      <option>Opay</option>
+      <option>GTBank</option>
+      <option>UBA</option>
+      <option>Kuda</option>
+      <option>Access Bank</option>
+      <option>First Bank</option>
+      <option>Moniepoint</option>
+    </select>
+
+    <input id="amt" type="number" placeholder="Amount (₦)">
+    <input id="code" type="text" placeholder="Dingle Code">
+    <input id="pin" type="password" maxlength="4" placeholder="Your PIN">
+    <button onclick="doWithdraw()">Withdraw Now</button>
+
+    <div id="msg" class="msg"></div>
+    <a href="dashboard.html">← Back to Dashboard</a>
+  </div>
+
+  <script>
+    const LS = localStorage;
+    let user = JSON.parse(LS.getItem("dingle_user") || "{}");
+
+    if (!user || !user.name || !user.phone) {
+      window.location.href = "signup.html";
+    }
+
+    function doWithdraw() {
+      const accname = document.getElementById("accname").value.trim();
+      const accnum = document.getElementById("accnum").value.trim();
+      const bank = document.getElementById("bank").value;
+      const amount = +document.getElementById("amt").value;
+      const code = document.getElementById("code").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+      const msg = document.getElementById("msg");
+
+      if (!accname || !accnum || !bank || !amount || !code || !pin) {
+        msg.textContent = "❌ All fields are required.";
+        msg.className = "msg error";
+        return;
+      }
+
+      if (accnum.length !== 10 || isNaN(accnum)) {
+        msg.textContent = "❌ Invalid account number.";
+        msg.className = "msg error";
+        return;
+      }
+
+      if (code !== user.code) {
+        msg.textContent = "❌ Incorrect Dingle Code.";
+        msg.className = "msg error";
+        return;
+      }
+
+      if (pin !== user.pin) {
+        msg.textContent = "❌ Incorrect PIN.";
+        msg.className = "msg error";
+        return;
+      }
+
+      if (user.balance < amount) {
+        msg.textContent = "❌ Insufficient balance.";
+        msg.className = "msg error";
+        return;
+      }
+
+      // Deduct & save
+      user.balance -= amount;
+      LS.setItem("dingle_user", JSON.stringify(user));
+
+      // Log to history
+      const hist = JSON.parse(LS.getItem("dingle_hist") || "[]");
+      hist.push({
+        time: new Date().toLocaleString(),
+        text: `Withdrew ₦${amount} to ${accname} (${bank} - ${accnum})`
+      });
+      LS.setItem("dingle_hist", JSON.stringify(hist));
+
+      msg.textContent = `✅ ₦${amount} sent to ${accname} (${bank})`;
+      msg.className = "msg success";
+
+      // Reset
+      document.getElementById("accname").value = "";
+      document.getElementById("accnum").value = "";
+      document.getElementById("bank").value = "";
+      document.getElementById("amt").value = "";
+      document.getElementById("code").value = "";
+      document.getElementById("pin").value = "";
+    }
+  </script>
+
+</body>
+</html>

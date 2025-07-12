@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dingle – Lucky Spin</title>
+  <style>
+    body {
+      background: #e8fff1;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h2 {
+      color: #00b75a;
+      margin-bottom: 20px;
+    }
+
+    .wheel {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      margin: auto;
+      border: 8px dashed #00b75a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #00b75a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #019a4c;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #007d40;
+    }
+
+    a {
+      display: block;
+      margin-top: 30px;
+      color: #00b75a;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎯 Lucky Spin</h2>
+  <div class="wheel" id="wheel">Tap Spin</div>
+  <button onclick="spin()">SPIN NOW</button>
+
+  <div class="result" id="result"></div>
+
+  <a href="dashboard.html">← Back to Dashboard</a>
+
+  <script>
+    const LS = localStorage;
+    let user = JSON.parse(LS.getItem("dingle_user") || "{}");
+
+    let spun = false;
+
+    function spin() {
+      if (spun) {
+        document.getElementById("result").textContent = "⛔ You already spun!";
+        return;
+      }
+
+      const rewards = [0, 50, 100, 200, 0];
+      const prize = rewards[Math.floor(Math.random() * rewards.length)];
+
+      document.getElementById("wheel").textContent = prize > 0 ? `₦${prize}` : "😢 Try Again";
+      spun = true;
+
+      if (prize > 0) {
+        user.balance = (user.balance || 0) + prize;
+        LS.setItem("dingle_user", JSON.stringify(user));
+
+        const hist = JSON.parse(LS.getItem("dingle_hist") || "[]");
+        hist.push({ time: new Date().toLocaleString(), text: `Won ₦${prize} from Lucky Spin` });
+        LS.setItem("dingle_hist", JSON.stringify(hist));
+
+        document.getElementById("result").textContent = `🎉 Congrats! ₦${prize} added to your balance.`;
+      } else {
+        document.getElementById("result").textContent = "😢 No luck this time. Try again later!";
+      }
+    }
+  </script>
+
+</body>
+</html>
