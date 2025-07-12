@@ -2,124 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Withdraw – Dingle</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #fff;
-      font-size: 18px;
-    }
-    h2 {
-      font-size: 26px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    input {
-      width: 100%;
-      max-width: 400px;
-      padding: 14px;
-      margin: 10px auto;
-      display: block;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 18px;
+    body { font-family: Arial; padding: 20px; background: #fff; font-size: 18px; }
+    h2 { text-align: center; font-size: 26px; margin-bottom: 20px; }
+    input, button {
+      width: 100%; max-width: 400px; padding: 14px; margin: 10px auto;
+      display: block; border-radius: 10px; font-size: 18px; border: 1px solid #ccc;
     }
     button {
-      width: 100%;
-      max-width: 400px;
-      padding: 14px;
-      margin: 20px auto;
-      display: block;
-      font-size: 20px;
-      background: #00cc66;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
+      background: #00cc66; color: #fff; font-weight: bold; border: none; cursor: pointer;
     }
-    button:hover {
-      background-color: #00994d;
-    }
+    button:hover { background: #00994d; }
     .back a {
-      display: block;
-      text-align: center;
-      margin-top: 30px;
-      color: #00aa55;
-      font-weight: bold;
-      text-decoration: none;
+      display: block; text-align: center; margin-top: 25px;
+      color: #00aa55; font-weight: bold; text-decoration: none;
     }
   </style>
 </head>
 <body>
 
-  <h2>Withdraw Funds</h2>
+<h2>Withdraw Funds</h2>
 
-  <input id="bank" type="text" placeholder="Bank Name" />
-  <input id="account" type="number" placeholder="Account Number" maxlength="10" />
-  <input id="amount" type="number" placeholder="Amount to Withdraw (₦)" />
+<input id="bank"    placeholder="Bank Name" />
+<input id="account" type="number" placeholder="Account Number" maxlength="10" />
+<input id="amount"  type="number" placeholder="Amount (₦)" />
+<input id="code"    placeholder="Enter Dingle Code" />
 
-  <!-- Hidden code behind the scenes -->
-  <input type="hidden" id="code" value="beyond" />
+<button onclick="withdraw()">Withdraw Now</button>
 
-  <button onclick="withdrawNow()">Withdraw Now</button>
-
-  <div class="back"><a href="dashboard.html">← Back to Dashboard</a></div>
+<div class="back"><a href="dashboard.html">← Back to Dashboard</a></div>
 
 <script>
-  if (localStorage.getItem("dingle_balance") === null) {
-    localStorage.setItem("dingle_balance", "20000");
+const CODE = "beyond";
+if (localStorage.getItem("dingle_balance") === null) {
+  localStorage.setItem("dingle_balance", "20000");
+}
+
+function withdraw() {
+  const bank = document.getElementById("bank").value.trim();
+  const acct = document.getElementById("account").value.trim();
+  const amt = parseFloat(document.getElementById("amount").value.trim());
+  const code = document.getElementById("code").value.trim().toLowerCase();
+
+  if (!bank || !acct || !amt || !code) {
+    alert("❌ Fill all fields");
+    return;
   }
-  let balance = parseFloat(localStorage.getItem("dingle_balance"));
-
-  function withdrawNow() {
-    const bank = document.getElementById("bank").value.trim();
-    const acct = document.getElementById("account").value.trim();
-    const amt  = parseFloat(document.getElementById("amount").value.trim());
-    const code = document.getElementById("code").value.trim().toLowerCase();
-
-    if (!bank || !acct || !amt) {
-      alert("❌ Fill all fields");
-      return;
-    }
-
-    if (acct.length < 10 || isNaN(acct)) {
-      alert("❌ Invalid account number");
-      return;
-    }
-
-    if (code !== "beyond") {
-      alert("❌ Unauthorized action");
-      return;
-    }
-
-    if (amt > balance) {
-      alert("❌ Insufficient balance");
-      return;
-    }
-
-    balance -= amt;
-    localStorage.setItem("dingle_balance", balance);
-
-    const hist = JSON.parse(localStorage.getItem("dingle_history") || "[]");
-    hist.unshift({
-      type: "Withdraw",
-      bank,
-      account: acct,
-      amount: amt,
-      time: new Date().toLocaleString()
-    });
-    localStorage.setItem("dingle_history", JSON.stringify(hist));
-
-    alert(`✅ ₦${amt} sent to ${acct} (${bank})\nNew balance: ₦${balance}`);
-    document.getElementById("bank").value = "";
-    document.getElementById("account").value = "";
-    document.getElementById("amount").value = "";
+  if (acct.length < 10 || isNaN(acct)) {
+    alert("❌ Invalid account");
+    return;
   }
+  if (code !== CODE) {
+    alert("❌ Incorrect Dingle Code");
+    return;
+  }
+
+  let bal = parseFloat(localStorage.getItem("dingle_balance"));
+  if (amt > bal) {
+    alert("❌ Insufficient balance");
+    return;
+  }
+
+  bal -= amt;
+  localStorage.setItem("dingle_balance", bal);
+
+  const h = JSON.parse(localStorage.getItem("dingle_history") || "[]");
+  h.unshift({
+    type: "Withdraw",
+    bank,
+    account: acct,
+    amount: amt,
+    time: new Date().toLocaleString()
+  });
+  localStorage.setItem("dingle_history", JSON.stringify(h));
+
+  alert(`✅ ₦${amt} sent to ${acct}\nNew balance: ₦${bal}`);
+  document.querySelectorAll("input").forEach(i => i.value = "");
+}
 </script>
+
 </body>
 </html>
