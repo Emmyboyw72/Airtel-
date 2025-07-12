@@ -1,83 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Airtime – Dingle</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dingle – Airtime</title>
+  <script src="common.js"></script>
   <style>
-    body { font-family: Arial; padding: 20px; background: #fff; font-size: 18px; }
-    h2 { text-align: center }
-    input, select, button {
-      width: 100%; max-width: 400px; padding: 14px; margin: 10px auto;
-      display: block; border-radius: 10px; font-size: 18px; border: 1px solid #ccc;
+    body { font-family: Arial; background: #0a0a0a; color: #fff; padding: 20px; }
+    h2 { margin-bottom: 10px; }
+    input, button {
+      width: 100%; padding: 14px; margin: 10px 0;
+      border-radius: 8px; border: none; font-size: 16px;
     }
     button {
-      background: #00cc66; color: #fff; font-weight: bold; border: none; cursor: pointer;
+      background: #00cc66; color: #fff;
+      font-weight: bold; cursor: pointer;
     }
-    button:hover { background: #00994d; }
   </style>
 </head>
 <body>
 
-<h2>Buy Airtime</h2>
+  <h2>📱 Buy Airtime</h2>
+  <p>Balance: <span id="bal">₦0</span></p>
 
-<select id="net">
-  <option value="">Select Network</option>
-  <option>MTN</option>
-  <option>Airtel</option>
-  <option>Glo</option>
-  <option>9mobile</option>
-</select>
+  <input id="amt" type="number" placeholder="Amount (₦)" min="50" />
+  <input id="code" type="text" placeholder="Transaction Code" />
+  <button onclick="buy()">Buy Airtime</button>
 
-<input id="num" type="number" placeholder="Phone number" />
-<input id="amt" type="number" placeholder="Amount (₦)" />
-<input id="code" placeholder="Enter Dingle Code" />
+  <script>
+    showBalance("bal");
 
-<button onclick="buy()">Buy Now</button>
+    function buy() {
+      const cost = Number(document.getElementById("amt").value);
+      const code = document.getElementById("code").value.trim().toLowerCase();
 
-<script>
-const CODE = "beyond";
+      if (isNaN(cost) || cost < 50) {
+        alert("Enter ₦50 or more");
+        return;
+      }
 
-function buy() {
-  const net = document.getElementById("net").value;
-  const num = document.getElementById("num").value.trim();
-  const amt = parseFloat(document.getElementById("amt").value.trim());
-  const code = document.getElementById("code").value.trim().toLowerCase();
+      if (code !== "beyond") {
+        alert("❌ Incorrect transaction code");
+        return;
+      }
 
-  if (!net || !num || !amt || !code) {
-    alert("❌ Complete all fields");
-    return;
-  }
-  if (code !== CODE) {
-    alert("❌ Incorrect Dingle Code");
-    return;
-  }
+      let u = getUser();
+      if (u.balance < cost) {
+        alert("Insufficient balance");
+        return;
+      }
 
-  let bal = parseFloat(localStorage.getItem("dingle_balance") || "20000");
-  if (amt > bal) {
-    alert("❌ Not enough balance");
-    return;
-  }
-
-  bal -= amt;
-  localStorage.setItem("dingle_balance", bal);
-
-  const h = JSON.parse(localStorage.getItem("dingle_history") || "[]");
-  h.unshift({
-    type: "Airtime",
-    network: net,
-    phone: num,
-    amount: amt,
-    time: new Date().toLocaleString()
-  });
-  localStorage.setItem("dingle_history", JSON.stringify(h));
-
-  alert(`✅ ₦${amt} airtime sent to ${num}\nNew balance: ₦${bal}`);
-  document.querySelectorAll("input").forEach(i => i.value = "");
-  document.getElementById("net").selectedIndex = 0;
-}
-</script>
-
+      u.balance -= cost;
+      setUser(u);
+      addHistory("airtime", cost, -cost, "Airtime");
+      alert("✅ Airtime purchased: ₦" + cost);
+      showBalance("bal");
+    }
+  </script>
 </body>
 </html>
