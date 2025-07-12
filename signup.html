@@ -5,19 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Signup – Dingle</title>
   <style>
-    body { font-family: Arial; padding: 20px; background: #f4f4f4; font-size: 18px; }
-    h2 { text-align: center; }
-    input, button {
-      width: 100%; max-width: 400px;
-      padding: 14px; margin: 10px auto; display: block;
-      border-radius: 10px; font-size: 18px; border: 1px solid #ccc;
+    body {font-family:Arial;padding:20px;background:#f4f4f4;font-size:18px}
+    h2 {text-align:center}
+    input,button{
+      width:100%;max-width:400px;padding:14px;margin:10px auto;display:block;
+      border-radius:10px;font-size:18px;border:1px solid #ccc
     }
-    button {
-      background: #00cc66; color: #fff; font-weight: bold;
-      border: none; cursor: pointer;
-    }
-    button:hover { background: #00994d; }
-    .link { text-align: center; margin-top: 15px; }
+    button{background:#00cc66;color:#fff;font-weight:bold;border:none;cursor:pointer}
+    button:hover{background:#00994d}
+    .link{text-align:center;margin-top:15px}
   </style>
 </head>
 <body>
@@ -25,10 +21,10 @@
 <h2>Create Account</h2>
 
 <input id="username" placeholder="Full Name" />
-<input id="email" type="email" placeholder="Gmail (must end with @gmail.com)" />
-<input id="phone" type="number" placeholder="Phone (11 digits)" />
-<input id="pass" type="password" placeholder="Password (≥4 chars)" />
-<input id="code" placeholder="Enter Dingle Code" />
+<input id="email"    type="email"  placeholder="Gmail (must end with @gmail.com)" />
+<input id="phone"    type="number" placeholder="Phone (11 digits)" />
+<input id="pass"     type="password" placeholder="Password (≥4 chars)" />
+<input id="code"     placeholder="Enter Dingle Code" />
 
 <button onclick="signup()">Sign Up</button>
 <div class="link"><a href="login.html">Already have an account? Login</a></div>
@@ -37,40 +33,26 @@
 const REQUIRED_CODE = "dinglecooperative";
 
 function signup() {
-  const n = document.getElementById("username").value.trim();
-  const e = document.getElementById("email").value.trim();
-  const p = document.getElementById("phone").value.trim();
-  const pw = document.getElementById("pass").value.trim();
-  const c = document.getElementById("code").value.trim().toLowerCase();
+  const name  = document.getElementById("username").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const pwd   = document.getElementById("pass").value.trim();
+  const code  = document.getElementById("code").value.trim().toLowerCase();
 
-  if (!n || !e || !p || !pw || !c) {
-    alert("❌ All fields required");
-    return;
-  }
-  if (!e.endsWith("@gmail.com")) {
-    alert("❌ Must use Gmail");
-    return;
-  }
-  if (p.length !== 11 || isNaN(p)) {
-    alert("❌ Phone must be 11 digits");
-    return;
-  }
-  if (pw.length < 4) {
-    alert("❌ Password too short");
-    return;
-  }
-  if (c !== REQUIRED_CODE) {
-    alert("❌ Incorrect Dingle Code");
-    return;
-  }
+  // Basic validation
+  if (!name||!email||!phone||!pwd||!code){alert("❌ All fields required");return;}
+  if (!email.endsWith("@gmail.com"))      {alert("❌ Must use Gmail");return;}
+  if (phone.length!==11 || isNaN(phone))  {alert("❌ Phone must be 11 digits");return;}
+  if (pwd.length<4)                       {alert("❌ Password too short");return;}
+  if (code!==REQUIRED_CODE)               {alert("❌ Incorrect Dingle Code");return;}
 
-  // Only allow 1 account per device
+  // Enforce one account per device
   if (localStorage.getItem("dingle_user")) {
     alert("❌ Only one account allowed on this device");
     return;
   }
 
-  const user = { name: n, email: e, phone: p, password: pw };
+  const user = { name, email, phone, password: pwd, balance: 20000 };
   localStorage.setItem("dingle_user", JSON.stringify(user));
   alert("✅ Signup successful! Please login.");
   window.location.href = "login.html";
