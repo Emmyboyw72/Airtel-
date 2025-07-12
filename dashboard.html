@@ -6,118 +6,79 @@
   <title>Dingle Dashboard</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      background: #e9ffe9;
+      font-family: Arial, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
     }
-
-    .header {
-      background: #00cc66;
-      color: white;
+    .top {
       padding: 20px;
-      text-align: center;
-      font-size: 20px;
     }
-
+    .top h2 {
+      margin-bottom: 10px;
+    }
     .balance-box {
-      background: white;
-      margin: 20px auto;
-      padding: 20px;
+      background: #00cc66;
       border-radius: 15px;
-      max-width: 400px;
+      padding: 20px;
+      margin: 10px;
       text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
+    .balance-box span {
+      font-size: 16px;
+      display: block;
+    }
+    .balance-box h3 {
+      font-size: 28px;
+      margin: 10px 0 0;
+    }
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 15px;
-      max-width: 400px;
-      margin: 0 auto 20px;
-      padding: 0 10px;
-    }
-
-    .btn {
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 12px;
       padding: 20px;
+    }
+    .btn {
+      background: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 20px;
       text-align: center;
+      padding: 20px 10px;
+      font-size: 15px;
       font-weight: bold;
-      font-size: 16px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.05);
-      cursor: pointer;
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 2px 5px #000;
     }
-
     .btn:hover {
-      background: #ccf5e7;
-    }
-
-    .logout-btn {
-      display: block;
-      width: 90%;
-      margin: 20px auto;
-      background: red;
-      color: white;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      padding: 15px;
-      font-weight: bold;
-    }
-
-    .logout-btn:hover {
-      background: darkred;
+      background: #2a2a2a;
     }
   </style>
 </head>
 <body>
 
-<div class="header" id="greeting">Hi, User</div>
+<div class="top">
+  <h2>👋 Hi, <span id="userName">User</span></h2>
+</div>
 
 <div class="balance-box">
-  Available Balance: ₦<span id="balance">20,000</span>
+  <span>Available Balance</span>
+  <h3 id="balance">₦0.00</h3>
 </div>
 
 <div class="grid">
-  <div class="btn" onclick="go('withdraw.html')">Withdraw</div>
-  <div class="btn" onclick="go('airtime.html')">Airtime</div>
-  <div class="btn" onclick="go('data.html')">Data</div>
-  <div class="btn" onclick="go('trade.html')">Trade</div>
-  <div class="btn" onclick="go('game.html')">Game</div>
-  <div class="btn" onclick="go('buycode.html')">Buy Code</div>
+  <a href="withdraw.html" class="btn">💸 Withdraw</a>
+  <a href="data.html" class="btn">📡 Data</a>
+  <a href="airtime.html" class="btn">📱 Airtime</a>
+  <a href="game.html" class="btn">🎮 Game</a>
+  <a href="buycode.html" class="btn">💳 Buy Code</a>
+  <a href="history.html" class="btn">📜 History</a>
 </div>
 
-<button class="logout-btn" onclick="logout()">Logout</button>
-
 <script>
-  const user = JSON.parse(localStorage.getItem("dingle_logged_in"));
-
-  if (!user) {
-    alert("⛔ Not logged in. Redirecting...");
-    window.location.href = "login.html";
-  } else {
-    document.getElementById("greeting").textContent = `Hi, ${user.name}`;
-    if (!user.balance) {
-      user.balance = 20000;
-      localStorage.setItem("dingle_logged_in", JSON.stringify(user));
-    }
-    document.getElementById("balance").textContent = user.balance.toLocaleString();
-  }
-
-  function go(page) {
-    window.location.href = page;
-  }
-
-  function logout() {
-    localStorage.removeItem("dingle_logged_in");
-    alert("✅ Logged out");
-    window.location.href = "login.html";
-  }
+  const user = JSON.parse(localStorage.getItem("dingle_logged_in") || "{}");
+  document.getElementById("userName").textContent = user.name?.toUpperCase() || "USER";
+  document.getElementById("balance").textContent = "₦" + (user.balance || 0).toLocaleString();
 </script>
 
 </body>
