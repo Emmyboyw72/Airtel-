@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Login – Dingle</title>
   <script src="common.js"></script>
   <style>
@@ -46,7 +46,7 @@
   <h2>Login</h2>
 
   <input id="phone" type="number" placeholder="Phone (11 digits)" />
-  <input id="pass" type="password" placeholder="Password" />
+  <input id="pass"  type="password" placeholder="Password" />
   <button onclick="login()">Login</button>
 
   <div class="link">
@@ -54,7 +54,6 @@
   </div>
 
   <script>
-    // Redirect to dashboard if already logged in
     window.onload = () => {
       const u = localStorage.getItem("dingle_logged_in");
       if (u && u !== "null") {
@@ -85,7 +84,6 @@
         return;
       }
 
-      // Save active login session
       localStorage.setItem("dingle_logged_in", JSON.stringify(u));
       alert("✅ Login successful!");
       location = "dashboard.html";
