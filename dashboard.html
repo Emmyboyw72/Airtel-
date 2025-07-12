@@ -2,218 +2,126 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Dingle Dashboard</title>
+
+  <!-- 🛡️ Block access if not logged in -->
+  <script>
+    if (localStorage.getItem("dingle_loggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+  </script>
+
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
       font-family: Arial, sans-serif;
-      background: #006644;
+      background-color: #004d00;
       color: white;
-      text-align: center;
-      padding-bottom: 150px;
-      min-height: 100vh;
+      overflow: hidden;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      font-size: 18px;
+    }
+
+    .container {
+      height: 100%;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      justify-content: space-between;
     }
 
-    .card {
-      margin: 30px auto 10px;
-      max-width: 360px;
-      background: #ffffff;
-      color: #222;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.08);
-      padding: 22px;
+    h1 {
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 10px;
     }
 
-    h2 {
-      margin: 0 0 10px;
-      color: #00b75a;
+    .balance {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 20px;
     }
 
-    .bal {
-      font-size: 24px;
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .bal span {
-      margin-right: 10px;
-    }
-
-    .eye {
-      cursor: pointer;
-      font-size: 20px;
-      user-select: none;
-    }
-
-    .withdraw-btn {
-      max-width: 380px;
-      width: 90%;
-      margin: 0 auto;
-      padding: 18px;
-      font-size: 18px;
-      font-weight: bold;
-      background: #00b75a;
-      color: white;
-      border: none;
-      border-radius: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      cursor: pointer;
-    }
-
-    .withdraw-btn:hover {
-      background: #019a4c;
-    }
-
-    .btn-box {
-      max-width: 380px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 16px;
-      padding: 24px 10px 30px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    .buttons {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: 15px;
+      margin-top: 10px;
     }
 
     .btn {
-      padding: 18px 10px;
+      padding: 16px;
+      background-color: #00cc66;
+      border: none;
+      color: white;
+      border-radius: 12px;
       font-size: 16px;
       font-weight: bold;
-      border: none;
-      border-radius: 12px;
-      background: #00b75a;
-      color: white;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      text-align: center;
       cursor: pointer;
-      transition: background 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
 
     .btn:hover {
-      background: #019a4c;
+      background-color: #00b359;
     }
 
-    .banner {
-      max-width: 380px;
-      margin: 0 auto;
-      background: #009159;
-      padding: 16px;
-      border-radius: 14px;
+    .withdraw {
+      grid-column: span 3;
+      background-color: #ff6600;
+    }
+
+    .logout {
+      background-color: #cc0000;
+      padding: 14px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
       font-weight: bold;
-      box-shadow: 0 3px 10px rgba(0,0,0,.15);
-    }
-
-    #popup {
-      position: fixed;
-      left: 50%;
-      bottom: 90px;
-      transform: translateX(-50%);
-      background: #00b75a;
       color: white;
-      padding: 14px 24px;
-      border-radius: 30px;
-      font-weight: bold;
-      opacity: 0;
-      transition: opacity 0.5s;
-      pointer-events: none;
-      z-index: 999;
+      width: 100%;
+      max-width: 300px;
+      margin: 30px auto 0;
+      display: block;
     }
 
-    #withdraw {
-      position: fixed;
-      bottom: 25px;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      font-size: 16px;
-      font-weight: bold;
-      opacity: 0;
-      transition: opacity 1s ease;
-      user-select: none;
+    .logout:hover {
+      background-color: #b30000;
     }
   </style>
 </head>
+
 <body>
+  <div class="container">
+    <div>
+      <h1>Welcome to Dingle</h1>
+      <div class="balance">Balance: ₦20,000</div>
 
-  <!-- balance card -->
-  <div class="card">
-    <h2>👋 Welcome, <span id="username">User</span></h2>
-    <p class="bal">
-      <span id="balance">₦0</span>
-      <span class="eye" onclick="toggleBalance()">👁️</span>
-    </p>
+      <div class="buttons">
+        <button class="btn withdraw">Withdraw</button>
+        <button class="btn">Game</button>
+        <button class="btn">Buy Code</button>
+        <button class="btn">History</button>
+        <button class="btn">Data</button>
+        <button class="btn">Airtime</button>
+        <button class="btn">Trade</button>
+      </div>
+    </div>
+
+    <button class="logout" onclick="logout()">Logout</button>
   </div>
 
-  <!-- Withdraw button (top row) -->
-  <button class="Withdraw-btn" onclick="go('withdraw.html')">💸 Withdraw</button>
-
-  <!-- Other buttons -->
-  <div class="btn-box">
-    <button class="btn" onclick="go('game.html')">🎮 Game</button>
-    <button class="btn" onclick="go('buycode.html')">💳 Code</button>
-    <button class="btn" onclick="go('history.html')">📜 History</button>
-    <button class="btn" onclick="go('data.html')">📶 Data</button>
-    <button class="btn" onclick="go('airtime.html')">📱 Airtime</button>
-    <button class="btn" onclick="go('trade.html')">📈 Trade</button>
-  </div>
-
-  <!-- Motivational banner -->
-  <div class="banner">💡 Your money should work for <em>you</em> — let Dingle trade while you relax!</div>
-
-  <!-- Pop-up and Withdraw ticker -->
-  <div id="popup">🚀 Trade now and get instant money</div>
-  <div id="withdraw">Loading…</div>
-
-<script>
-  const LS = localStorage;
-  let user = JSON.parse(LS.getItem("dingle_user") || "{}");
-  if (!user.name) location.href = "signup.html";
-  user.balance = user.balance ?? 20000;
-  const balEl = document.getElementById("balance");
-  document.getElementById("username").textContent = user.name;
-  let showBal = true;
-  function updateBalance() {
-    balEl.textContent = showBal ? `₦${user.balance.toLocaleString()}` : '•••••••';
-  }
-  updateBalance();
-  function toggleBalance() {
-    showBal = !showBal;
-    updateBalance();
-  }
-  function go(p) {
-    location.href = p;
-  }
-
-  // Popup message
-  const popup = document.getElementById("popup");
-  setTimeout(() => popup.style.opacity = 1, 500);
-  setTimeout(() => popup.style.opacity = 0, 10500);
-
-  // Withdraw ticker
-  const withdraw = document.getElementById("withdraw");
-  const names = ["Emeka", "Ada", "Blessing", "Ibrahim", "Tolu", "Uche", "Zainab", "Kelechi", "Favour", "Ifeoma", "Samuel", "Peter"];
-  const amounts = ["₦2,000", "₦3,000", "₦3,800", "₦4,500", "₦5,000", "₦6,200", "₦7,000", "₦8,500", "₦10,000"];
-  function rollWithdraw() {
-    withdraw.style.opacity = 0;
-    setTimeout(() => {
-      const name = names[Math.floor(Math.random() * names.length)];
-      const amt = amounts[Math.floor(Math.random() * amounts.length)];
-      const t = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      withdraw.textContent = `✅ ${name} withdrew ${amt} – ${t}`;
-      withdraw.style.opacity = 1;
-    }, 900);
-  }
-  rollWithdraw();
-  setInterval(rollWithdraw, 10000);
-
-  // Auto balance refresh
-  window.addEventListener("focus", updateBalance);
-</script>
-
+  <script>
+    function logout() {
+      localStorage.setItem("dingle_loggedIn", "false");
+      window.location.href = "login.html";
+    }
+  </script>
 </body>
 </html>
