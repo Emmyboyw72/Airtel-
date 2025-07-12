@@ -2,62 +2,123 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dingle Dashboard</title>
   <style>
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#121212;color:#fff;
-      font-size:16px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-    .header{padding:20px}
-    .header h2{margin:0;font-size:20px}
-    .balance-box{background:#00c56f;border-radius:14px;padding:20px;margin:15px;color:#fff}
-    .balance-box h3{margin:0;font-size:14px;display:flex;justify-content:space-between}
-    .amount{font-size:26px;font-weight:bold;margin-top:10px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;padding:0 15px 30px}
-    .btn{background:#1f1f1f;border-radius:14px;padding:20px 10px;text-align:center;font-size:14px;
-      font-weight:bold;cursor:pointer;color:#fff;box-shadow:0 4px 6px rgba(0,0,0,.3)}
-    .btn:hover{background:#333}
-    .logout{text-align:center;margin:30px 0}
-    .logout button{background:#cc0000;border:none;border-radius:8px;padding:10px 20px;font-size:16px;
-      color:#fff;cursor:pointer}
-    .logout button:hover{background:#a30000}
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #e9ffe9;
+    }
+
+    .header {
+      background: #00cc66;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .balance-box {
+      background: white;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 400px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      max-width: 400px;
+      margin: 0 auto 20px;
+      padding: 0 10px;
+    }
+
+    .btn {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #ccf5e7;
+    }
+
+    .logout-btn {
+      display: block;
+      width: 90%;
+      margin: 20px auto;
+      background: red;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      font-weight: bold;
+    }
+
+    .logout-btn:hover {
+      background: darkred;
+    }
   </style>
 </head>
 <body>
-  <div class="header"><h2>Hi, <span id="username">User</span> 👋</h2></div>
 
-  <div class="balance-box">
-    <h3>
-      <span>Available Balance</span>
-      <span><a href="history.html" style="color:#fff;text-decoration:underline">History</a></span>
-    </h3>
-    <div class="amount">₦0.00</div>
-  </div>
+<div class="header" id="greeting">Hi, User</div>
 
-  <div class="grid">
-    <div class="btn" onclick="go('withdraw.html')">Withdraw</div>
-    <div class="btn" onclick="go('game.html')">Game</div>
-    <div class="btn" onclick="go('buycode.html')">Buy Code</div>
-    <div class="btn" onclick="go('history.html')">History</div>
-    <div class="btn" onclick="go('data.html')">Data</div>
-    <div class="btn" onclick="go('airtime.html')">Airtime</div>
-    <div class="btn" onclick="go('trade.html')">Trade</div>
-  </div>
+<div class="balance-box">
+  Available Balance: ₦<span id="balance">20,000</span>
+</div>
 
-  <div class="logout"><button onclick="logout()">Logout</button></div>
+<div class="grid">
+  <div class="btn" onclick="go('withdraw.html')">Withdraw</div>
+  <div class="btn" onclick="go('airtime.html')">Airtime</div>
+  <div class="btn" onclick="go('data.html')">Data</div>
+  <div class="btn" onclick="go('trade.html')">Trade</div>
+  <div class="btn" onclick="go('game.html')">Game</div>
+  <div class="btn" onclick="go('buycode.html')">Buy Code</div>
+</div>
 
-  <script>
-    if(localStorage.getItem("dingle_loggedIn")!=="true"){window.location.href="login.html";}
+<button class="logout-btn" onclick="logout()">Logout</button>
 
-    document.getElementById("username").innerText =
-      localStorage.getItem("dingle_name") || "User";
+<script>
+  const user = JSON.parse(localStorage.getItem("dingle_logged_in"));
 
-    const bal = Number(localStorage.getItem("dingle_balance")||0).toLocaleString();
-    document.querySelector(".amount").innerText="₦"+bal;
+  if (!user) {
+    alert("⛔ Not logged in. Redirecting...");
+    window.location.href = "login.html";
+  } else {
+    document.getElementById("greeting").textContent = `Hi, ${user.name}`;
+    if (!user.balance) {
+      user.balance = 20000;
+      localStorage.setItem("dingle_logged_in", JSON.stringify(user));
+    }
+    document.getElementById("balance").textContent = user.balance.toLocaleString();
+  }
 
-    function go(p){window.location.href=p;}
-    function logout(){localStorage.setItem("dingle_loggedIn","false");window.location.href="login.html";}
-  </script>
+  function go(page) {
+    window.location.href = page;
+  }
+
+  function logout() {
+    localStorage.removeItem("dingle_logged_in");
+    alert("✅ Logged out");
+    window.location.href = "login.html";
+  }
+</script>
+
 </body>
 </html>
