@@ -1,121 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Live Trade – Dingle</title>
-<style>
-  html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#111;color:#fff}
-  h2{text-align:center;margin:15px 0;font-size:22px}
-  #chartBox{width:100%;max-width:420px;margin:0 auto;border:2px solid #333;border-radius:8px}
-  canvas{background:#000;display:block;width:100%;height:220px;border-radius:6px}
-  .btn{width:100%;max-width:420px;padding:14px;margin:18px auto 0;display:block;
-       border:none;border-radius:10px;font-size:18px;font-weight:bold;cursor:pointer}
-  #startBtn{background:#00cc66;color:#fff}
-  #withdrawBtn{background:#d32f2f;color:#fff;display:none}
-  #startBtn:hover{background:#00994d}
-  #withdrawBtn:hover{background:#b71c1c}
-  .back a{display:block;text-align:center;margin:25px 0;color:#00aa55;font-weight:bold;
-          text-decoration:none}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Trade – Dingle</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #fff; font-size: 18px; }
+    h2 { text-align: center; color: #004d00; }
+    .chart {
+      width: 100%; height: 200px; background: #e6f9f0;
+      margin: 20px 0; position: relative; overflow: hidden;
+    }
+    .line {
+      height: 2px; width: 100%; position: absolute;
+      animation: pulse 2s infinite alternate;
+    }
+    .line.up { background: green; top: 40%; }
+    .line.down { background: red; top: 60%; }@keyframes pulse {
+  0% { transform: scaleX(0.9); }
+  100% { transform: scaleX(1.1); }
+}
+
+button {
+  display: block; margin: 15px auto; padding: 15px;
+  font-size: 18px; font-weight: bold;
+  background: #00cc66; color: #fff; border: none; border-radius: 10px;
+  cursor: pointer; max-width: 400px; width: 100%;
+}
+button:hover { background: #00994d; }
+.msg { text-align: center; margin-top: 20px; font-weight: bold; }
+
+  </style>
 </head>
 <body>
+<h2>Crypto Trade</h2>
+<div class="chart">
+  <div class="line up"></div>
+  <div class="line down"></div>
+</div>
+<button onclick="startTrade()">Start Trade (₦1000)</button>
+<button onclick="endTrade()">Withdraw from Trade</button>
+<div class="msg" id="msg"></div><script>
+if (localStorage.getItem("dingle_balance") === null) localStorage.setItem("dingle_balance", "20000");
 
-<h2>Live Trade&nbsp;— Stake ₦1 000</h2>
-<div id="chartBox"><canvas id="chart" width="400" height="220"></canvas></div>
-
-<button id="startBtn"    class="btn" onclick="startTrade()">Start Trade</button>
-<button id="withdrawBtn" class="btn" onclick="stopTrade()">Withdraw &amp; Close</button>
-
-<div class="back"><a href="dashboard.html">← Back to Dashboard</a></div>
-
-<script>
-/* ---------- helpers ---------- */
-const STAKE = 1000;               // always deduct this at start
-const TICK_MS = 1000;             // chart update speed
-const ctx = document.getElementById("chart").getContext("2d");
-let data = [];                    // price history
+let tradeValue = 1000;
 let running = false;
-let iv = null;                    // interval id
-let startPrice = 100;             // starting price
-let price = startPrice;
+let interval;
 
-/* Ensure balance exists */
-if(localStorage.getItem("dingle_balance")===null){
-  localStorage.setItem("dingle_balance","20000");
-}
+function startTrade() {
+  let bal = parseFloat(localStorage.getItem("dingle_balance"));
+  if (bal < 1000 || running) return alert("❌ Not enough balance or trade already running");
 
-function startTrade(){
-  let balance = parseFloat(localStorage.getItem("dingle_balance"));
-  if(balance < STAKE){alert("❌ Insufficient balance");return;}
-  balance -= STAKE;
-  localStorage.setItem("dingle_balance",balance);
-
-  // init
-  data = [price = startPrice = 100];
-  drawChart();
+  bal -= 1000;
+  localStorage.setItem("dingle_balance", bal);
+  tradeValue = 1000;
   running = true;
-  iv = setInterval(tick,TICK_MS);
 
-  document.getElementById("startBtn").style.display="none";
-  document.getElementById("withdrawBtn").style.display="block";
+  interval = setInterval(() => {
+    const change = (Math.random() - 0.5) * 200;
+    tradeValue += change;
+    document.getElementById("msg").innerText = `📈 Trade Value: ₦${tradeValue.toFixed(2)}`;
+  }, 3000);
 }
 
-function tick(){
-  // random walk
-  const change = (Math.random()-0.5)*4; // ±2
-  price = Math.max(50, price + change);
-  data.push(price);
-  if(data.length > 40) data.shift();
-  drawChart();
-}
+function endTrade() {
+  if (!running) return alert("❌ No trade running");
+  clearInterval(interval);
+  running = false;
 
-function drawChart(){
-  ctx.clearRect(0,0,400,220);
-  ctx.beginPath();
-  ctx.moveTo(0,scaleY(data[0]));
-  data.forEach((p,i)=>ctx.lineTo(i*10,scaleY(p)));
-  ctx.strokeStyle = data[data.length-1] >= data[data.length-2] ? "#00c853" : "#d50000";
-  ctx.lineWidth = 2;
-  ctx.stroke();
-}
+  let bal = parseFloat(localStorage.getItem("dingle_balance"));
+  bal += tradeValue;
+  localStorage.setItem("dingle_balance", bal);
 
-function scaleY(val){
-  // map price 50–150 to canvas 200–20
-  return 200-( (val-50)/(100) * 180 );
-}
-
-function stopTrade(){
-  if(!running) return;
-  clearInterval(iv);
-  running=false;
-
-  const current = price;
-  const diff = current - startPrice;           // +ve or -ve
-  const profit = Math.round(diff*10);          // scale profit/loss
-  let balance = parseFloat(localStorage.getItem("dingle_balance"));
-  balance += STAKE + profit;                   // return stake + P/L
-  localStorage.setItem("dingle_balance",balance);
-
-  // history
-  const hist = JSON.parse(localStorage.getItem("dingle_history")||"[]");
-  hist.unshift({
-    type:"Trade",
-    stake: STAKE,
-    entry: startPrice.toFixed(2),
-    exit:  current.toFixed(2),
-    pl:    profit,
-    time:  new Date().toLocaleString()
+  const history = JSON.parse(localStorage.getItem("dingle_history") || "[]");
+  history.unshift({
+    type: "Trade",
+    result: tradeValue.toFixed(2),
+    time: new Date().toLocaleString()
   });
-  localStorage.setItem("dingle_history",JSON.stringify(hist));
+  localStorage.setItem("dingle_history", JSON.stringify(history));
 
-  alert(`Trade closed.\nP/L: ₦${profit>=0?profit:"+ "+profit}\nNew balance: ₦${balance}`);
-
-  document.getElementById("withdrawBtn").style.display="none";
-  document.getElementById("startBtn").style.display="block";
+  document.getElementById("msg").innerText = `✅ Trade closed: ₦${tradeValue.toFixed(2)} added. New balance: ₦${bal.toFixed(2)}`;
 }
-</script>
-
-</body>
+</script></body>
 </html>
