@@ -3,125 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Dingle Dashboard</title>
-
-  <!-- 🛡️ Block access if not logged in -->
-  <script>
-    if (localStorage.getItem("dingle_loggedIn") !== "true") {
-      window.location.href = "login.html";
-    }
-  </script>
-
   <style>
+    * { box-sizing: border-box; }
+
     html, body {
       margin: 0;
       padding: 0;
-      width: 100vw;
-      height: 100vh;
       font-family: Arial, sans-serif;
-      background-color: #004d00;
+      background-color: #121212;
       color: white;
-      overflow: hidden;
+      font-size: 16px;
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
-      font-size: 18px;
     }
 
-    .container {
-      height: 100%;
+    .header {
       padding: 20px;
+    }
+
+    .header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .balance-box {
+      background-color: #00c56f;
+      border-radius: 14px;
+      padding: 20px;
+      margin: 15px;
+      color: white;
+    }
+
+    .balance-box h3 {
+      margin: 0;
+      font-size: 14px;
       display: flex;
-      flex-direction: column;
       justify-content: space-between;
     }
 
-    h1 {
-      font-size: 28px;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .balance {
-      text-align: center;
-      font-size: 22px;
-      margin-bottom: 20px;
-    }
-
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+    .balance-box .amount {
+      font-size: 26px;
+      font-weight: bold;
       margin-top: 10px;
     }
 
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      padding: 0 15px 30px;
+    }
+
     .btn {
-      padding: 16px;
-      background-color: #00cc66;
-      border: none;
-      color: white;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: bold;
+      background-color: #1f1f1f;
+      border-radius: 14px;
+      padding: 20px 10px;
       text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      transition: 0.2s;
     }
 
     .btn:hover {
-      background-color: #00b359;
-    }
-
-    .withdraw {
-      grid-column: span 3;
-      background-color: #ff6600;
+      background-color: #333;
     }
 
     .logout {
-      background-color: #cc0000;
-      padding: 14px;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      color: white;
-      width: 100%;
-      max-width: 300px;
-      margin: 30px auto 0;
-      display: block;
+      text-align: center;
+      margin: 30px 0;
     }
 
-    .logout:hover {
-      background-color: #b30000;
+    .logout button {
+      background-color: #cc0000;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .logout button:hover {
+      background-color: #a30000;
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <div>
-      <h1>Welcome to Dingle</h1>
-      <div class="balance">Balance: ₦20,000</div>
 
-      <div class="buttons">
-        <button class="btn withdraw">Withdraw</button>
-        <button class="btn">Game</button>
-        <button class="btn">Buy Code</button>
-        <button class="btn">History</button>
-        <button class="btn">Data</button>
-        <button class="btn">Airtime</button>
-        <button class="btn">Trade</button>
-      </div>
-    </div>
+  <div class="header">
+    <h2>Hi, <span id="username">User</span> 👋</h2>
+  </div>
 
-    <button class="logout" onclick="logout()">Logout</button>
+  <div class="balance-box">
+    <h3>
+      <span>Available Balance</span>
+      <span><a href="history.html" style="color: white; text-decoration: underline;">History</a></span>
+    </h3>
+    <div class="amount">₦0.00</div>
+  </div>
+
+  <div class="button-grid">
+    <div class="btn" onclick="go('withdraw.html')">Withdraw</div>
+    <div class="btn" onclick="go('game.html')">Game</div>
+    <div class="btn" onclick="go('buycode.html')">Buy Code</div>
+    <div class="btn" onclick="go('history.html')">History</div>
+    <div class="btn" onclick="go('data.html')">Data</div>
+    <div class="btn" onclick="go('airtime.html')">Airtime</div>
+    <div class="btn" onclick="go('trade.html')">Trade</div>
+    <div class="btn" onclick="go('profile.html')">Profile</div>
+    <div class="btn" onclick="go('invite.html')">Invite</div>
+  </div>
+
+  <div class="logout">
+    <button onclick="logout()">Logout</button>
   </div>
 
   <script>
+    // Show name
+    const name = localStorage.getItem("dingle_name") || "User";
+    document.getElementById("username").innerText = name;
+
+    // Route to page
+    function go(page) {
+      window.location.href = page;
+    }
+
+    // Logout function
     function logout() {
       localStorage.setItem("dingle_loggedIn", "false");
       window.location.href = "login.html";
     }
   </script>
+
 </body>
 </html>
