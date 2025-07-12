@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Signup – Dingle</title>
   <style>
     body {
@@ -42,60 +43,70 @@
 </head>
 <body>
 
-  <h2>Create Account</h2>
+<h2>Create Account</h2>
 
-  <input id="username" placeholder="Full Name" />
-  <input id="email"    type="email"  placeholder="Gmail (must end with @gmail.com)" />
-  <input id="phone"    type="number" placeholder="Phone (11 digits)" />
-  <input id="pass"     type="password" placeholder="Password (≥4 chars)" />
-  
-  <button onclick="signup()">Sign Up</button>
+<input id="username" placeholder="Full Name" />
+<input id="email"    type="email" placeholder="Gmail (must end with @gmail.com)" />
+<input id="phone"    type="number" placeholder="Phone (11 digits)" />
+<input id="pass"     type="password" placeholder="Password (≥4 chars)" />
 
-  <div class="link">
-    <a href="login.html">Already have an account? Login</a>
-  </div>
+<button onclick="signup()">Sign Up</button>
 
-  <script>
-    function signup() {
-      const n  = document.getElementById("username").value.trim();
-      const e  = document.getElementById("email").value.trim();
-      const p  = document.getElementById("phone").value.trim();
-      const pw = document.getElementById("pass").value.trim();
+<div class="link"><a href="login.html">Already have an account? Login</a></div>
 
-      if (!n || !e || !p || !pw) {
-        alert("❌ All fields are required");
-        return;
-      }
-      if (!e.endsWith("@gmail.com")) {
-        alert("❌ Must use Gmail");
-        return;
-      }
-      if (p.length !== 11 || isNaN(p)) {
-        alert("❌ Phone must be 11 digits");
-        return;
-      }
-      if (pw.length < 4) {
-        alert("❌ Password too short");
-        return;
-      }
-      if (localStorage.getItem("dingle_user")) {
-        alert("❌ One account per device only");
-        return;
-      }
+<script>
+  function signup() {
+    const n  = document.getElementById("username").value.trim();
+    const e  = document.getElementById("email").value.trim();
+    const p  = document.getElementById("phone").value.trim();
+    const pw = document.getElementById("pass").value.trim();
 
-      const user = {
-        name: n,
-        email: e,
-        phone: p,
-        password: pw,
-        balance: 20000
-      };
-
-      localStorage.setItem("dingle_user", JSON.stringify(user));
-      alert("✅ Signup successful! Please login.");
-      window.location.href = "login.html";
+    if (!n || !e || !p || !pw) {
+      alert("❌ All fields are required");
+      return;
     }
-  </script>
+    if (!e.endsWith("@gmail.com")) {
+      alert("❌ Must use Gmail");
+      return;
+    }
+    if (p.length !== 11 || isNaN(p)) {
+      alert("❌ Phone must be 11 digits");
+      return;
+    }
+    if (pw.length < 4) {
+      alert("❌ Password too short");
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("dingle_users") || "[]");
+
+    // Check for duplicates
+    if (users.some(u => u.phone === p || u.email === e)) {
+      alert("❌ Phone or Gmail already registered");
+      return;
+    }
+
+    // Allow only 2 accounts
+    if (users.length >= 2) {
+      alert("❌ Only 2 accounts allowed per device");
+      return;
+    }
+
+    const newUser = {
+      name: n,
+      email: e,
+      phone: p,
+      password: pw,
+      balance: 20000
+    };
+
+    users.push(newUser);
+    localStorage.setItem("dingle_users", JSON.stringify(users));
+
+    alert("✅ Signup successful! Please login.");
+    location.href = "login.html";
+  }
+</script>
 
 </body>
 </html>
