@@ -1,35 +1,96 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Login – Dingle</title>
-<script src="common.js"></script>
-<style>
- body{font-family:Arial;padding:20px;background:#f4f4f4;font-size:18px}
- input,button{width:100%;max-width:400px;padding:14px;margin:10px auto;
-  border-radius:10px;border:1px solid #ccc;font-size:18px}
- button{background:#00cc66;color:#fff;font-weight:bold;border:none;cursor:pointer}
- button:hover{background:#00994d}
- h2{text-align:center}
-</style></head><body>
-<h2>Login</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login – Dingle</title>
+  <script src="common.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      font-size: 18px;
+    }
+    h2 {
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 10px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #00cc66;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00994d;
+    }
+    .link {
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
 
-<input id="phone" type="number" placeholder="Phone (11 digits)">
-<input id="pass"  type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-<div style="text-align:center"><a href="signup.html">Create account</a></div>
+  <h2>Login</h2>
 
-<script>
-const PROFILE_KEY="dingle_user",LOGIN_KEY="dingle_logged_in";
-window.onload=()=>{ if(localStorage.getItem(LOGIN_KEY)) location="dashboard.html"; };
+  <input id="phone" type="number" placeholder="Phone (11 digits)" />
+  <input id="pass" type="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
 
-function login(){
-  const p=document.getElementById("phone").value.trim();
-  const pw=document.getElementById("pass").value.trim();
-  if(!p||!pw){alert("Fill all");return;}
-  if(p.length!==11||isNaN(p)){alert("Phone must be 11 digits");return;}
+  <div class="link">
+    <a href="signup.html">Create account</a>
+  </div>
 
-  const u=JSON.parse(localStorage.getItem(PROFILE_KEY)||"null");
-  if(!u||u.phone!==p||u.password!==pw){alert("Wrong details");return;}
-  localStorage.setItem(LOGIN_KEY,JSON.stringify(u));
-  location="dashboard.html";
-}
-</script></body></html>
+  <script>
+    // Redirect to dashboard if already logged in
+    window.onload = () => {
+      const u = localStorage.getItem("dingle_logged_in");
+      if (u && u !== "null") {
+        try {
+          const user = JSON.parse(u);
+          if (user.phone && user.password) {
+            location = "dashboard.html";
+          }
+        } catch (e) {}
+      }
+    };
+
+    function login() {
+      const phone = document.getElementById("phone").value.trim();
+      const pass = document.getElementById("pass").value.trim();
+      const u = JSON.parse(localStorage.getItem("dingle_user") || "null");
+
+      if (!phone || !pass) {
+        alert("❌ Fill in all fields");
+        return;
+      }
+      if (phone.length !== 11 || isNaN(phone)) {
+        alert("❌ Phone must be 11 digits");
+        return;
+      }
+      if (!u || u.phone !== phone || u.password !== pass) {
+        alert("❌ Incorrect phone or password");
+        return;
+      }
+
+      // Save active login session
+      localStorage.setItem("dingle_logged_in", JSON.stringify(u));
+      alert("✅ Login successful!");
+      location = "dashboard.html";
+    }
+  </script>
+
+</body>
+</html>
