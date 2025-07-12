@@ -1,129 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dingle Trade</title>
-<style>
-  body{font-family:Arial;margin:0;background:#0d0d0d;color:#fff;display:flex;flex-direction:column;align-items:center}
-  h2{margin:20px 0}
-  #chart{width:90%;max-width:500px;height:300px;border:1px solid #333;border-radius:8px;background:#111}
-  button{margin:20px;width:90%;max-width:500px;padding:15px;font-size:18px;font-weight:bold;border:none;border-radius:10px;cursor:pointer}
-  #start{background:#00cc66;color:#fff}
-  #withdraw{background:#ff3333;color:#fff;display:none}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dingle – Trade</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="common.js"></script>
+  <style>
+    body { font-family: Arial; margin: 0; background: #0f0f0f; color: #fff; text-align: center; }
+    h2 { margin: 20px 0; }
+    .box {
+      background: #1a1a1a; padding: 20px; margin: 15px auto;
+      border-radius: 10px; max-width: 500px; width: 90%;
+    }
+    input, select, button {
+      width: 100%; padding: 14px; margin-top: 10px;
+      border: none; border-radius: 8px; font-size: 16px;
+    }
+    button { font-weight: bold; cursor: pointer; }
+    #start { background: #00cc66; color: #fff; }
+    #withdraw { background: #ff3333; color: #fff; display: none; }
+    canvas { background: #111; border-radius: 8px; margin-top: 10px; }
+    .info { margin-top: 15px; font-size: 18px; }
+  </style>
 </head>
 <body>
 
-<h2>📈 Live Trade</h2>
-<canvas id="chart"></canvas>
+<h2>📊 Dingle Live Trade</h2>
 
-<button id="start" onclick="startTrade()">Start Trade (₦1 000)</button>
-<button id="withdraw" onclick="stopTrade()">Withdraw / Stop</button>
+<div class="box">
+  <label>Select Coin</label>
+  <select id="coin">
+    <option value="BTC">🟠 Bitcoin (BTC)</option>
+    <option value="ETH">🟣 Ethereum (ETH)</option>
+    <option value="SOL">🟡 Solana (SOL)</option>
+  </select>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <label>Enter Stake Amount (min ₦1000)</label>
+  <input id="amount" type="number" min="1000" placeholder="₦1000 or more" />
+
+  <button id="start" onclick="startTrade()">BUY / Start Trade</button>
+  <button id="withdraw" onclick="stopTrade()">WITHDRAW</button>
+</div>
+
+<canvas id="chart" width="400" height="280"></canvas>
+
+<div class="info">
+  <p>⏱️ Time: <span id="timer">0s</span></p>
+  <p>💸 Current Value: ₦<span id="val">0.00</span></p>
+  <p>📊 Profit/Loss: <span id="net">₦0.00</span> (<span id="percent">0%</span>)</p>
+</div>
+
 <script>
-/* ---------- helpers ---------- */
-const BAL_KEY   = "dingle_logged_in";
 const TRADE_KEY = "dingle_trade";
-const HIST_KEY  = "dingle_history";
-const STAKE     = 1000;                       // ₦ staked each trade
-const TICK_MS   = 1500;                       // 1.5-sec update
-let timer=null, chart, data=[], labels=[], currentVal=STAKE;
+const TICK_MS = 2000; // every 2 seconds
+let timer = null, seconds = 0, stake = 0, coin = "", current = 0;
+let data = [], labels = [];
+let chart;
 
-/* ---------- setup chart ---------- */
-function initChart(){
-  const ctx=document.getElementById("chart");
-  chart=new Chart(ctx,{type:"line",data:{
-    labels, datasets:[{data, fill:false, tension:.4,
-      borderColor:"#00ff77", pointRadius:0}]
-  },options:{animation:false, plugins:{legend:{display:false}},
-    scales:{x:{display:false},y:{ticks:{color:"#888"}}}}); }
+// Draw Chart
+function initChart() {
+  const ctx = document.getElementById("chart");
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: "#00ff99",
+        tension: 0.4,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      animation: false,
+      scales: { x: { display: false }, y: { ticks: { color: "#ccc" } } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
 
-/* ---------- random walk ---------- */
-function tick(){
-  let change = (Math.random()*0.12-0.06)*STAKE;      // ±6 % max step
-  currentVal = Math.max(0, currentVal + change);     // never below 0
-  data.push(currentVal.toFixed(2));
-  labels.push("");                                   // dummy label
-  if(data.length>60){data.shift();labels.shift();}   // keep 60 points
+// Every tick: simulate value change
+function tick() {
+  const change = Math.random() * 0.1 - 0.05; // -5% to +5%
+  current = Math.max(0, current + stake * change);
+  data.push(current.toFixed(2)); labels.push("");
+  if (data.length > 30) { data.shift(); labels.shift(); }
+
+  const gain = current - stake;
+  const gainPct = ((gain / stake) * 100).toFixed(1);
+
+  chart.data.datasets[0].borderColor = gain >= 0 ? "#00ff66" : "#ff3333";
   chart.update();
 
-  // color flips red if loss
-  chart.data.datasets[0].borderColor = currentVal>=STAKE ? "#00ff77" : "#ff4444";
-  saveTrade();                                       // persist state
+  document.getElementById("val").textContent = current.toFixed(2);
+  document.getElementById("net").textContent = `₦${gain.toFixed(2)}`;
+  document.getElementById("percent").textContent = `${gainPct}%`;
+
+  seconds += 2;
+  document.getElementById("timer").textContent = `${seconds}s`;
+
+  saveState();
 }
 
-/* ---------- persistence ---------- */
-function saveTrade(){
-  localStorage.setItem(TRADE_KEY, JSON.stringify({
-    start: Date.now(), data, currentVal
-  }));
-}
-function clearTrade(){ localStorage.removeItem(TRADE_KEY); }
-
-/* ---------- balance helpers ---------- */
-function getUser(){return JSON.parse(localStorage.getItem(BAL_KEY)||"{}");}
-function setUser(u){localStorage.setItem(BAL_KEY,JSON.stringify(u));}
-
-/* ---------- history helpers ---------- */
-function addHistory(type,amount,result){
-  const h=JSON.parse(localStorage.getItem(HIST_KEY)||"[]");
-  h.unshift({type,amount,result,time:new Date().toLocaleString()});
-  localStorage.setItem(HIST_KEY,JSON.stringify(h));
+// Save trade in localStorage
+function saveState() {
+  localStorage.setItem(TRADE_KEY, JSON.stringify({ stake, coin, current, data, seconds }));
 }
 
-/* ---------- start ---------- */
-function startTrade(){
-  let u=getUser();
-  if(!u.name){alert("Please log in");return;}
-  if(u.balance<STAKE){alert("Insufficient balance");return;}
+// Start Trade
+function startTrade() {
+  stake = Number(document.getElementById("amount").value);
+  coin = document.getElementById("coin").value;
 
-  // deduct stake once at start
-  u.balance-=STAKE; setUser(u);
-  currentVal=STAKE; data=[STAKE]; labels=[""];
+  if (isNaN(stake) || stake < 1000) {
+    alert("Minimum stake is ₦1000");
+    return;
+  }
 
-  initChart();
-  document.getElementById("start").style.display="none";
-  document.getElementById("withdraw").style.display="block";
+  let u = getUser();
+  if (u.balance < stake) {
+    alert("Insufficient balance");
+    return;
+  }
 
-  timer=setInterval(tick,TICK_MS);
-  saveTrade();
+  u.balance -= stake; setUser(u);
+  addHistory("trade-start", stake, -stake, `${coin} stake`);
+  
+  // init trade
+  current = stake;
+  data = [stake]; labels = [""];
+  seconds = 0;
+
+  if (!chart) initChart();
+  else { chart.data.datasets[0].data = data; chart.update(); }
+
+  document.getElementById("start").style.display = "none";
+  document.getElementById("withdraw").style.display = "block";
+  timer = setInterval(tick, TICK_MS);
+  saveState();
 }
 
-/* ---------- stop ---------- */
-function stopTrade(){
+// Stop Trade
+function stopTrade() {
   clearInterval(timer);
-  document.getElementById("withdraw").style.display="none";
-  document.getElementById("start").style.display="block";
-  clearTrade();
+  const profit = current - stake;
 
-  // pay out
-  let u=getUser();
-  const profit = parseFloat(currentVal.toFixed(2));
-  const net    = profit-STAKE;
-  u.balance   += profit;
+  let u = getUser();
+  u.balance += current;
   setUser(u);
 
-  addHistory("trade", STAKE, net);
-  alert(`Trade closed.\nStake: ₦${STAKE}\nReturn: ₦${profit.toFixed(2)}\nNet: ₦${net.toFixed(2)}`);
+  addHistory("trade-end", stake, profit, `${coin} return`);
+  alert(`Trade closed: ₦${current.toFixed(2)} (${profit >= 0 ? "+" : ""}₦${profit.toFixed(2)})`);
+
+  document.getElementById("start").style.display = "block";
+  document.getElementById("withdraw").style.display = "none";
+  localStorage.removeItem(TRADE_KEY);
 }
 
-/* ---------- resume if trade exists ---------- */
-window.onload=()=>{
-  const saved=JSON.parse(localStorage.getItem(TRADE_KEY)||"null");
-  initChart();
-  if(saved){
-    data   = saved.data;
-    labels = Array(saved.data.length).fill("");
-    currentVal = saved.currentVal;
-    chart.data.labels=labels;
-    chart.data.datasets[0].data=data;
+// Resume if already trading
+window.onload = () => {
+  const saved = JSON.parse(localStorage.getItem(TRADE_KEY) || "null");
+  if (saved) {
+    stake = saved.stake; coin = saved.coin;
+    current = saved.current; data = saved.data;
+    seconds = saved.seconds || 0;
+    labels = Array(data.length).fill("");
+
+    initChart();
+    chart.data.datasets[0].data = data;
     chart.update();
 
-    document.getElementById("start").style.display="none";
-    document.getElementById("withdraw").style.display="block";
-    timer=setInterval(tick,TICK_MS);
+    document.getElementById("amount").value = stake;
+    document.getElementById("coin").value = coin;
+    document.getElementById("start").style.display = "none";
+    document.getElementById("withdraw").style.display = "block";
+    timer = setInterval(tick, TICK_MS);
+    tick(); // immediately update
   }
 };
 </script>
