@@ -1,109 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- spin.html --><!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dingle – Lucky Spin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Spin – Dingle</title>
   <style>
-    body {
-      background: #e8fff1;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px;
-    }
-
-    h2 {
-      color: #00b75a;
-      margin-bottom: 20px;
-    }
-
+    body { background: #f9f9f9; font-family: Arial, sans-serif; padding: 20px; font-size: 18px; }
+    h2 { text-align: center; color: #004d00; }
     .wheel {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      margin: auto;
-      border: 8px dashed #00b75a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: bold;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 300px; height: 300px; border: 10px solid #00cc66;
+      border-radius: 50%; margin: 20px auto; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      background: #fff;
     }
-
-    button {
-      margin-top: 25px;
-      padding: 14px 28px;
-      font-size: 16px;
-      font-weight: bold;
-      background: #00b75a;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+    .spin-btn {
+      background: #00cc66; color: #fff; font-weight: bold;
+      padding: 15px 30px; border: none; border-radius: 10px;
+      font-size: 18px; cursor: pointer; display: block;
+      margin: 20px auto;
     }
-
-    button:hover {
-      background: #019a4c;
-    }
-
-    .result {
-      margin-top: 20px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #007d40;
-    }
-
-    a {
-      display: block;
-      margin-top: 30px;
-      color: #00b75a;
-      text-decoration: none;
-    }
+    .spin-btn:hover { background: #00994d; }
+    .result { text-align: center; font-weight: bold; margin-top: 15px; }
   </style>
 </head>
 <body>
+  <h2>Spin & Win</h2>
+  <div class="wheel">SPIN</div>
+  <button class="spin-btn" onclick="spinWheel()">Spin Now (₦100)</button>
+  <div class="result" id="result"></div><script>
+if (localStorage.getItem("dingle_balance") === null) localStorage.setItem("dingle_balance", "20000");
 
-  <h2>🎯 Lucky Spin</h2>
-  <div class="wheel" id="wheel">Tap Spin</div>
-  <button onclick="spin()">SPIN NOW</button>
-
-  <div class="result" id="result"></div>
-
-  <a href="dashboard.html">← Back to Dashboard</a>
-
-  <script>
-    const LS = localStorage;
-    let user = JSON.parse(LS.getItem("dingle_user") || "{}");
-
-    let spun = false;
-
-    function spin() {
-      if (spun) {
-        document.getElementById("result").textContent = "⛔ You already spun!";
-        return;
-      }
-
-      const rewards = [0, 50, 100, 200, 0];
-      const prize = rewards[Math.floor(Math.random() * rewards.length)];
-
-      document.getElementById("wheel").textContent = prize > 0 ? `₦${prize}` : "😢 Try Again";
-      spun = true;
-
-      if (prize > 0) {
-        user.balance = (user.balance || 0) + prize;
-        LS.setItem("dingle_user", JSON.stringify(user));
-
-        const hist = JSON.parse(LS.getItem("dingle_hist") || "[]");
-        hist.push({ time: new Date().toLocaleString(), text: `Won ₦${prize} from Lucky Spin` });
-        LS.setItem("dingle_hist", JSON.stringify(hist));
-
-        document.getElementById("result").textContent = `🎉 Congrats! ₦${prize} added to your balance.`;
-      } else {
-        document.getElementById("result").textContent = "😢 No luck this time. Try again later!";
-      }
+function spinWheel() {
+  let bal = parseFloat(localStorage.getItem("dingle_balance"));
+  if (bal < 100) return alert("❌ Not enough balance");
+  bal -= 100;
+  const win = Math.floor(Math.random() * 5) * 100 + 100; // ₦100 – ₦500
+  bal += win;
+  localStorage.setItem("dingle_balance", bal);
+  const history = JSON.parse(localStorage.getItem("dingle_history") || "[]");
+  history.unshift({ type: "Spin", won: win, cost: 100, time: new Date().toLocaleString() });
+  localStorage.setItem("dingle_history", JSON.stringify(history));
+  document.getElementById("result").innerText = `🎉 You won ₦${win}! New Balance: ₦${bal}`;
+}
+</script></body>
+</html><!-- game.html --><!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Game – Dingle</title>
+  <style>
+    body { background: #f2f2f2; font-family: Arial, sans-serif; padding: 20px; font-size: 18px; }
+    h2 { text-align: center; color: #004d00; }
+    .btn {
+      display: block; width: 100%; max-width: 400px; padding: 15px;
+      margin: 15px auto; font-size: 20px; font-weight: bold;
+      background: #00cc66; color: white; border: none; border-radius: 10px;
+      cursor: pointer;
     }
-  </script>
+    .btn:hover { background: #00994d; }
+    .msg { text-align: center; margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Play & Earn</h2>
+  <button class="btn" onclick="playGame()">Play Now (₦150)</button>
+  <div class="msg" id="msg"></div><script>
+if (localStorage.getItem("dingle_balance") === null) localStorage.setItem("dingle_balance", "20000");
 
-</body>
+function playGame() {
+  let bal = parseFloat(localStorage.getItem("dingle_balance"));
+  if (bal < 150) return alert("❌ Not enough balance");
+  bal -= 150;
+  const outcome = Math.random() > 0.5 ? 200 : 0; // Win ₦200 or nothing
+  bal += outcome;
+  localStorage.setItem("dingle_balance", bal);
+  const history = JSON.parse(localStorage.getItem("dingle_history") || "[]");
+  history.unshift({ type: "Game", result: outcome > 0 ? "Win" : "Lose", reward: outcome, cost: 150, time: new Date().toLocaleString() });
+  localStorage.setItem("dingle_history", JSON.stringify(history));
+  document.getElementById("msg").innerText = outcome > 0 ? `🎯 You won ₦${outcome}!` : "😢 You lost this round!";
+}
+</script></body>
 </html>
