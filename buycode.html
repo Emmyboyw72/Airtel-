@@ -1,118 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Dingle – Buy Code</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Buy Code – Dingle</title>
   <style>
-    body {
-      background: #e8fff1;
+    html, body {
+      margin: 0;
+      padding: 20px;
       font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px;
-    }
-
-    .box {
-      background: #fff;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.1);
-      max-width: 360px;
-      margin: auto;
+      background: #ffffff;
+      color: #111;
+      font-size: 18px;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     h2 {
-      color: #00b75a;
-      margin-bottom: 15px;
+      font-size: 26px;
+      text-align: center;
+      margin-bottom: 20px;
     }
 
-    .details {
-      background: #f9f9f9;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      text-align: left;
-      font-size: 14px;
-      line-height: 1.5;
+    .info-box {
+      background: #f2f2f2;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+
+    .info-box p {
+      margin: 10px 0;
+      font-size: 17px;
+    }
+
+    .copy-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background-color: #00cc66;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .copy-btn:hover {
+      background-color: #00994d;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      font-size: 15px;
-      background: #00b75a;
+      max-width: 400px;
+      padding: 14px;
+      margin: 20px auto;
+      display: block;
+      font-size: 20px;
+      background-color: #004d00;
       color: white;
       border: none;
+      border-radius: 10px;
       font-weight: bold;
       cursor: pointer;
     }
 
     button:hover {
-      background: #019a4c;
+      background-color: #003300;
     }
 
-    .msg {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    .pending {
-      color: #d17e00;
-    }
-
-    .success {
-      color: #007d40;
-    }
-
-    a {
+    .back a {
       display: block;
-      margin-top: 15px;
-      color: #00b75a;
+      text-align: center;
+      margin-top: 30px;
+      color: #00aa55;
+      font-weight: bold;
       text-decoration: none;
     }
   </style>
 </head>
 <body>
 
-<div class="box">
-  <h2>💳 Buy Code</h2>
+  <h2>Buy Dingle Code – ₦8000</h2>
 
-  <div class="details" id="acctInfo">
-    <strong>Send ₦7,000 to:</strong><br><br>
-    Account Number: <b>8124890070</b><br>
-    Bank: <b>Opay</b><br>
-    Name: <b>Godswill Emmanuel Chukwuemeka</b>
+  <div class="info-box">
+    <p><strong>Send ₦8000 to:</strong></p>
+    <p><strong>Acct Name:</strong> Nkechinyere Angela OTI</p>
+    <p><strong>Bank:</strong> Access Bank</p>
+    <p>
+      <strong>Account No:</strong> 
+      <span id="accountNum">1450464068</span>
+      <button class="copy-btn" onclick="copyAccount()">Copy</button>
+    </p>
   </div>
 
-  <button onclick="copyDetails()">📋 Copy Account Details</button>
-  <button onclick="markPayment()">✅ I Have Made Payment</button>
+  <button onclick="confirmPayment()">✅ I Have Paid</button>
 
-  <div id="msg" class="msg"></div>
-  <a href="dashboard.html">← Back to Dashboard</a>
-</div>
+  <div class="back"><a href="dashboard.html">← Back to Dashboard</a></div>
 
-<script>
-  const LS = localStorage;
-  let user = JSON.parse(LS.getItem("dingle_user") || "{}");
+  <script>
+    function copyAccount() {
+      const text = document.getElementById("accountNum").innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Account number copied!");
+      });
+    }
 
-  if (!user || !user.name) {
-    window.location.href = "signup.html";
-  }
-
-  function copyDetails() {
-    const info = `Send ₦7,000 to:\nAccount Number: 8124890070\nBank: Opay\nName: Godswill Emmanuel Chukwuemeka`;
-    navigator.clipboard.writeText(info).then(() => {
-      document.getElementById("msg").textContent = "✅ Account details copied!";
-      document.getElementById("msg").className = "msg success";
-    });
-  }
-
-  function markPayment() {
-    document.getElementById("msg").textContent = "⏳ Payment pending. Not confirmed yet. Please hold on.";
-    document.getElementById("msg").className = "msg pending";
-  }
-</script>
+    function confirmPayment() {
+      alert("✅ Confirming your transaction...");
+      setTimeout(() => {
+        alert("⏳ Please wait… Still confirming your payment.");
+      }, 2500);
+    }
+  </script>
 
 </body>
 </html>
