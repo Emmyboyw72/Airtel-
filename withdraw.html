@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Withdraw – Dingle</title>
   <style>
     html, body {
@@ -62,7 +62,8 @@
   <input id="bank" type="text" placeholder="Bank Name" />
   <input id="account" type="number" placeholder="Account Number" maxlength="10" />
   <input id="amount" type="number" placeholder="Amount to Withdraw (₦)" />
-  <!-- Code is now hidden -->
+
+  <!-- Hidden code behind the scenes -->
   <input type="hidden" id="code" value="beyond" />
 
   <button onclick="withdrawNow()">Withdraw Now</button>
@@ -92,7 +93,7 @@
     }
 
     if (code !== "beyond") {
-      alert("❌ Unauthorized access");
+      alert("❌ Unauthorized action");
       return;
     }
 
@@ -121,4 +122,4 @@
   }
 </script>
 </body>
-    </html>
+</html>
