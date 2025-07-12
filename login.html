@@ -1,3 +1,4 @@
+<!-- login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,23 +28,32 @@
 <div class="link"><a href="signup.html">Don't have an account? Sign up</a></div>
 
 <script>
-function login() {
+const PROFILE_KEY = "dingle_user";
+const LOGIN_KEY   = "dingle_logged_in";
+
+// Auto-redirect to dashboard if already logged in
+window.onload = () => {
+  if (localStorage.getItem(LOGIN_KEY)) {
+    window.location.href = "dashboard.html";
+  }
+};
+
+function login(){
   const phone = document.getElementById("phone").value.trim();
   const pwd   = document.getElementById("pass").value.trim();
 
-  if (!phone||!pwd){alert("❌ All fields required");return;}
-  if (phone.length!==11 || isNaN(phone)){alert("❌ Phone must be 11 digits");return;}
+  if(!phone||!pwd){alert("❌ All fields required");return;}
+  if(phone.length!==11 || isNaN(phone)){alert("❌ Phone must be 11 digits");return;}
 
-  const user = JSON.parse(localStorage.getItem("dingle_user"));
+  const user = JSON.parse(localStorage.getItem(PROFILE_KEY)||"null");
 
-  if (!user || user.phone!==phone || user.password!==pwd) {
+  if(!user || user.phone !== phone || user.password !== pwd){
     alert("❌ Incorrect phone number or password");
     return;
   }
 
-  localStorage.setItem("dingle_logged_in", JSON.stringify(user));
-  alert("✅ Login successful!");
-  window.location.href = "dashboard.html";  // ✅ Redirects to dashboard
+  localStorage.setItem(LOGIN_KEY, JSON.stringify(user));
+  window.location.href = "dashboard.html";
 }
 </script>
 </body>
