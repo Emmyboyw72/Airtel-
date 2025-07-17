@@ -1,136 +1,131 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard - Airtel App</title>
+  <title>Airtel Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff5f5;
-      margin: 0;
-      padding: 20px;
-      color: #333;
+    * {
+      box-sizing: border-box;
     }
 
-    .header {
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: white url('your-logo.png') no-repeat center center fixed;
+      background-size: 300px;
+      color: #333;
       text-align: center;
+      position: relative;
+      animation: blinkLogo 4s infinite alternate;
+    }
+
+    @keyframes blinkLogo {
+      0% { opacity: 0.4; }
+      100% { opacity: 0.9; }
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 30px;
       margin-bottom: 30px;
     }
 
-    .header h2 {
+    .glass-card h2 {
+      margin: 0 0 10px;
       color: #d90000;
-      font-size: 24px;
     }
 
-    .balance-card {
-      background-color: #d90000;
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 25px;
-      text-align: center;
-    }
-
-    .balance-card h3 {
-      margin: 0;
-      font-size: 20px;
-    }
-
-    .balance-card p {
-      font-size: 32px;
-      margin: 10px 0 0 0;
+    .glass-card p {
+      font-size: 28px;
       font-weight: bold;
     }
 
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
     .btn {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
       background-color: #d90000;
       color: white;
-      font-size: 16px;
       border: none;
-      border-radius: 8px;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
 
     .btn:hover {
       background-color: #b00000;
     }
 
+    .logout-btn {
+      margin-top: 20px;
+      background-color: #444;
+    }
+
     .footer {
-      text-align: center;
       margin-top: 30px;
       font-size: 12px;
-      color: #888;
+      color: #999;
     }
   </style>
 </head>
-<body onload="loadDashboard()">
+<body onload="loadUser()">
 
-  <div class="header">
-    <h2>Welcome, <span id="userName">User</span></h2>
+  <div class="container">
+    <div class="glass-card">
+      <h2>Welcome, <span id="userName">User</span></h2>
+      <p>Balance: ₦<span id="userBalance">0</span></p>
+    </div>
+
+    <div class="button-grid">
+      <button class="btn" onclick="goTo('fund.html')">💰 Fund</button>
+      <button class="btn" onclick="goTo('data.html')">📶 Data</button>
+      <button class="btn" onclick="goTo('airtime.html')">💳 Airtime</button>
+      <button class="btn" onclick="goTo('history.html')">📜 History</button>
+    </div>
+
+    <button class="btn logout-btn" onclick="logout()">🚪 Logout</button>
+
+    <div class="footer">© 2025 Airtel App</div>
   </div>
-
-  <div class="balance-card">
-    <h3>Your Balance</h3>
-    <p>₦<span id="userBalance">0</span></p>
-  </div>
-
-  <button class="btn" onclick="buyData()">📶 Buy Data (₦200)</button>
-  <button class="btn" onclick="buyAirtime()">💳 Buy Airtime (₦100)</button>
-  <button class="btn" onclick="logout()">🚪 Logout</button>
-
-  <div class="footer">© 2025 Airtel App</div>
 
   <script>
     let user;
 
-    function loadDashboard() {
+    function loadUser() {
       user = JSON.parse(localStorage.getItem('user'));
       if (!user) {
         alert("Please log in.");
         window.location.href = "login.html";
         return;
       }
-
       document.getElementById('userName').textContent = user.name;
-      updateBalanceDisplay();
-    }
-
-    function updateBalanceDisplay() {
       document.getElementById('userBalance').textContent = user.balance;
-    }
-
-    function buyData() {
-      const cost = 200;
-      if (user.balance >= cost) {
-        user.balance -= cost;
-        localStorage.setItem('user', JSON.stringify(user));
-        updateBalanceDisplay();
-        alert("You have successfully purchased data!");
-      } else {
-        alert("Insufficient balance to buy data.");
-      }
-    }
-
-    function buyAirtime() {
-      const cost = 100;
-      if (user.balance >= cost) {
-        user.balance -= cost;
-        localStorage.setItem('user', JSON.stringify(user));
-        updateBalanceDisplay();
-        alert("You have successfully purchased airtime!");
-      } else {
-        alert("Insufficient balance to buy airtime.");
-      }
     }
 
     function logout() {
       localStorage.removeItem('user');
       alert("You have been logged out.");
       window.location.href = "index.html";
+    }
+
+    function goTo(page) {
+      window.location.href = page;
     }
   </script>
 
