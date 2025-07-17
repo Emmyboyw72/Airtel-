@@ -10,20 +10,26 @@
       background: white;
       overflow-x: hidden;
     }.background-logo {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
-  width: 250px;
   transform: translate(-50%, -50%);
-  z-index: -1;
+  width: 250px;
   opacity: 0.07;
-  filter: blur(5px);
+  filter: blur(8px);
   animation: blink 4s infinite ease-in-out;
+  z-index: 0;
+  pointer-events: none;
 }
 
 @keyframes blink {
   0%, 100% { opacity: 0.07; }
   50% { opacity: 0.15; }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
 }
 
 .header {
@@ -122,39 +128,48 @@
 
   </style>
 </head>
-<body>  <!-- Background Blurred Logo -->  <img src="your-logo.png" alt="Airtel Logo" class="background-logo">  <div class="header">
-    <div><b>Airtel Promo</b></div>
-    <div>
-      <img src="bell.png" alt="Bell" width="20">
-    </div>
-  </div>  <div class="main-card">
-    <div class="user-info" id="userName">Loading...</div>
-    <div id="userNumber">0000000000</div>
-    <div class="balance">
-      Account Balance: <span id="userBalance">₦0.00</span>
-      <span class="eye">👁️</span>
-    </div>
-    <div class="buttons-row">
-      <div class="btn">+ Add Money</div>
-      <div class="btn">Withdraw Cash</div>
-    </div>
-  </div>  <img src="update-banner.png" class="banner" alt="Update Banner">
-  <img src="promo-banner.png" class="promo-img" id="promoBanner" alt="Promo Banner">  <div class="section">
-    <b>Transfer & Cashout</b>
-    <div class="grid">
-      <div>Transfer Money</div>
-      <div>Add Money</div>
-      <div>Withdraw Cash</div>
-      <div>More Services</div>
-    </div>
-  </div>  <div class="section">
-    <b>Recharge & Bill Payments</b>
-    <div class="grid">
-      <div>Recharge Airtime</div>
-      <div>Buy Bundle</div>
-      <div>Pay Bill</div>
-      <div>Electricity</div>
-    </div>
+<body>  <!-- Background Blurred Logo -->  <img src="your-logo.png" alt="Airtel Logo" class="background-logo">  <!-- Main Content -->  <div class="content">
+    <div class="header">
+      <div><b>Airtel Promo</b></div>
+      <div>
+        <img src="bell.png" alt="Bell" width="20">
+      </div>
+    </div><div class="main-card">
+  <div class="user-info" id="userName">Loading...</div>
+  <div id="userNumber">0000000000</div>
+  <div class="balance">
+    Account Balance: <span id="userBalance">₦0.00</span>
+    <span class="eye">👁️</span>
+  </div>
+  <div class="buttons-row">
+    <div class="btn">+ Add Money</div>
+    <div class="btn">Withdraw Cash</div>
+  </div>
+</div>
+
+<img src="update-banner.png" class="banner" alt="Update Banner">
+<img src="promo-banner.png" class="promo-img" id="promoBanner" alt="Promo Banner">
+
+<div class="section">
+  <b>Transfer & Cashout</b>
+  <div class="grid">
+    <div>Transfer Money</div>
+    <div>Add Money</div>
+    <div>Withdraw Cash</div>
+    <div>More Services</div>
+  </div>
+</div>
+
+<div class="section">
+  <b>Recharge & Bill Payments</b>
+  <div class="grid">
+    <div>Recharge Airtime</div>
+    <div>Buy Bundle</div>
+    <div>Pay Bill</div>
+    <div>Electricity</div>
+  </div>
+</div>
+
   </div>  <div class="bottom-nav">
     <div>🏠 Home</div>
     <div>📷 Scan</div>
