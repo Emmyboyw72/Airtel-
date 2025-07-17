@@ -81,6 +81,7 @@
   margin: 0 5px;
   text-align: center;
   font-size: 14px;
+  cursor: pointer;
 }
 
 .banner, .promo {
@@ -106,6 +107,9 @@
 
 .grid div {
   padding: 10px;
+  cursor: pointer;
+  background: #f8f8f8;
+  border-radius: 10px;
 }
 
 .bottom-nav {
@@ -139,11 +143,11 @@
   <div id="userNumber">0000000000</div>
   <div class="balance">
     Account Balance: <span id="userBalance">₦0.00</span>
-    <span class="eye">👁️</span>
+    <span class="eye" onclick="toggleBalance()">👁️</span>
   </div>
   <div class="buttons-row">
-    <div class="btn">+ Add Money</div>
-    <div class="btn">Withdraw Cash</div>
+    <div class="btn" onclick="location.href='fund.html'">+ Add Money</div>
+    <div class="btn" onclick="location.href='withdraw.html'">Withdraw Cash</div>
   </div>
 </div>
 
@@ -153,33 +157,43 @@
 <div class="section">
   <b>Transfer & Cashout</b>
   <div class="grid">
-    <div>Transfer Money</div>
-    <div>Add Money</div>
-    <div>Withdraw Cash</div>
-    <div>More Services</div>
+    <div onclick="location.href='transfer.html'">Transfer Money</div>
+    <div onclick="location.href='fund.html'">Add Money</div>
+    <div onclick="location.href='withdraw.html'">Withdraw Cash</div>
+    <div onclick="location.href='services.html'">More Services</div>
   </div>
 </div>
 
 <div class="section">
   <b>Recharge & Bill Payments</b>
   <div class="grid">
-    <div>Recharge Airtime</div>
-    <div>Buy Bundle</div>
-    <div>Pay Bill</div>
-    <div>Electricity</div>
+    <div onclick="location.href='airtime.html'">Recharge Airtime</div>
+    <div onclick="location.href='bundle.html'">Buy Bundle</div>
+    <div onclick="location.href='bills.html'">Pay Bill</div>
+    <div onclick="location.href='electricity.html'">Electricity</div>
   </div>
 </div>
 
   </div>  <div class="bottom-nav">
-    <div>🏠 Home</div>
-    <div>📷 Scan</div>
-    <div>📄 History</div>
-    <div>☰ More</div>
+    <div onclick="location.href='dashboard.html'">🏠 Home</div>
+    <div onclick="location.href='scan.html'">📷 Scan</div>
+    <div onclick="location.href='history.html'">📄 History</div>
+    <div onclick="location.href='more.html'">☰ More</div>
   </div>  <script>
     const user = JSON.parse(localStorage.getItem('user')) || {};
+    const balanceElement = document.getElementById('userBalance');
+    const eyeIcon = document.querySelector('.eye');
+    let isHidden = false;
+
     document.getElementById('userName').innerText = (user.name || 'USER').toUpperCase();
     document.getElementById('userNumber').innerText = user.phone || '08000000000';
-    document.getElementById('userBalance').innerText = user.balance ? `₦${user.balance}` : '₦300.00';
+    const balanceValue = user.balance ? `₦${user.balance}` : '₦300.00';
+    balanceElement.innerText = balanceValue;
+
+    function toggleBalance() {
+      isHidden = !isHidden;
+      balanceElement.innerText = isHidden ? '••••••••' : balanceValue;
+    }
 
     // Promo animation
     const promo = document.getElementById('promoBanner');
