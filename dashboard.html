@@ -7,12 +7,23 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: white url('your-logo.png') no-repeat center center fixed;
-      background-size: 200px;
-      animation: blinkLogo 4s infinite;
-    }@keyframes blinkLogo {
-  0%, 100% { opacity: 0.1; }
-  50% { opacity: 0.03; }
+      background: white;
+      overflow-x: hidden;
+    }.background-logo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 250px;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  opacity: 0.07;
+  filter: blur(5px);
+  animation: blink 4s infinite ease-in-out;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.07; }
+  50% { opacity: 0.15; }
 }
 
 .header {
@@ -69,6 +80,7 @@
 .banner, .promo {
   margin: 10px;
   border-radius: 10px;
+  width: 95%;
 }
 
 .section {
@@ -110,8 +122,7 @@
 
   </style>
 </head>
-<body>
-  <div class="header">
+<body>  <!-- Background Blurred Logo -->  <img src="your-logo.png" alt="Airtel Logo" class="background-logo">  <div class="header">
     <div><b>Airtel Promo</b></div>
     <div>
       <img src="bell.png" alt="Bell" width="20">
