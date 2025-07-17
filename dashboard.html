@@ -84,10 +84,11 @@
   cursor: pointer;
 }
 
-.banner, .promo {
-  margin: 10px;
+.banner {
+  margin: 10px auto;
   border-radius: 10px;
   width: 95%;
+  display: none;
 }
 
 .section {
@@ -125,11 +126,6 @@
   font-size: 12px;
 }
 
-.promo-img {
-  display: none;
-  width: 100%;
-}
-
   </style>
 </head>
 <body>  <!-- Background Blurred Logo -->  <img src="your-logo.png" alt="Airtel Logo" class="background-logo">  <!-- Main Content -->  <div class="content">
@@ -151,8 +147,8 @@
   </div>
 </div>
 
-<img src="update-banner.png" class="banner" alt="Update Banner">
-<img src="promo-banner.png" class="promo-img" id="promoBanner" alt="Promo Banner">
+<img src="update-banner.png" class="banner" id="updateBanner" alt="Update Banner">
+<img src="promo-banner.png" class="banner" id="promoBanner" alt="Promo Banner">
 
 <div class="section">
   <b>Transfer & Cashout</b>
@@ -182,7 +178,6 @@
   </div>  <script>
     const user = JSON.parse(localStorage.getItem('user')) || {};
     const balanceElement = document.getElementById('userBalance');
-    const eyeIcon = document.querySelector('.eye');
     let isHidden = false;
 
     document.getElementById('userName').innerText = (user.name || 'USER').toUpperCase();
@@ -195,10 +190,19 @@
       balanceElement.innerText = isHidden ? '••••••••' : balanceValue;
     }
 
-    // Promo animation
-    const promo = document.getElementById('promoBanner');
-    setInterval(() => {
-      promo.style.display = promo.style.display === 'none' ? 'block' : 'none';
-    }, 5000);
+    const updateBanner = document.getElementById('updateBanner');
+    const promoBanner = document.getElementById('promoBanner');
+
+    function cycleBanners() {
+      updateBanner.style.display = 'block';
+      promoBanner.style.display = 'none';
+      setTimeout(() => {
+        updateBanner.style.display = 'none';
+        promoBanner.style.display = 'block';
+        setTimeout(cycleBanners, 10000); // Show promo for 10s
+      }, 5000); // Show update for 5s
+    }
+
+    cycleBanners();
   </script></body>
 </html>
