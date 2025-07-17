@@ -1,133 +1,164 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en">
 <head>
-  <title>Airtel Dashboard</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Airtel Promo Dashboard</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       background: white url('your-logo.png') no-repeat center center fixed;
-      background-size: 300px;
-      color: #333;
-      text-align: center;
-      position: relative;
-      animation: blinkLogo 4s infinite alternate;
-    }
+      background-size: 200px;
+      animation: blinkLogo 4s infinite;
+    }@keyframes blinkLogo {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.03; }
+}
 
-    @keyframes blinkLogo {
-      0% { opacity: 0.4; }
-      100% { opacity: 0.9; }
-    }
+.header {
+  background-color: #d90000;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .container {
-      padding: 20px;
-    }
+.main-card {
+  background: rgba(255, 255, 255, 0.9);
+  margin: -20px 10px 10px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px #ccc;
+  padding: 20px;
+}
 
-    .glass-card {
-      background: rgba(255, 255, 255, 0.25);
-      border-radius: 20px;
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      padding: 30px;
-      margin-bottom: 30px;
-    }
+.user-info {
+  font-weight: bold;
+  font-size: 16px;
+}
 
-    .glass-card h2 {
-      margin: 0 0 10px;
-      color: #d90000;
-    }
+.balance {
+  font-size: 20px;
+  margin-top: 10px;
+}
 
-    .glass-card p {
-      font-size: 28px;
-      font-weight: bold;
-    }
+.balance .eye {
+  color: red;
+  cursor: pointer;
+  margin-left: 5px;
+}
 
-    .button-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
+.buttons-row {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
 
-    .btn {
-      background-color: #d90000;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
+.btn {
+  background-color: #ffe5e5;
+  border: 1px solid #ffcccc;
+  color: #d90000;
+  border-radius: 10px;
+  padding: 10px;
+  flex: 1;
+  margin: 0 5px;
+  text-align: center;
+  font-size: 14px;
+}
 
-    .btn:hover {
-      background-color: #b00000;
-    }
+.banner, .promo {
+  margin: 10px;
+  border-radius: 10px;
+}
 
-    .logout-btn {
-      margin-top: 20px;
-      background-color: #444;
-    }
+.section {
+  background: white;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+}
 
-    .footer {
-      margin-top: 30px;
-      font-size: 12px;
-      color: #999;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.grid div {
+  padding: 10px;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  font-size: 12px;
+}
+
+.promo-img {
+  display: none;
+  width: 100%;
+}
+
   </style>
 </head>
-<body onload="loadUser()">
-
-  <div class="container">
-    <div class="glass-card">
-      <h2>Welcome, <span id="userName">User</span></h2>
-      <p>Balance: ₦<span id="userBalance">0</span></p>
+<body>
+  <div class="header">
+    <div><b>Airtel Promo</b></div>
+    <div>
+      <img src="bell.png" alt="Bell" width="20">
     </div>
-
-    <div class="button-grid">
-      <button class="btn" onclick="goTo('fund.html')">💰 Fund</button>
-      <button class="btn" onclick="goTo('data.html')">📶 Data</button>
-      <button class="btn" onclick="goTo('airtime.html')">💳 Airtime</button>
-      <button class="btn" onclick="goTo('history.html')">📜 History</button>
+  </div>  <div class="main-card">
+    <div class="user-info" id="userName">Loading...</div>
+    <div id="userNumber">0000000000</div>
+    <div class="balance">
+      Account Balance: <span id="userBalance">₦0.00</span>
+      <span class="eye">👁️</span>
     </div>
+    <div class="buttons-row">
+      <div class="btn">+ Add Money</div>
+      <div class="btn">Withdraw Cash</div>
+    </div>
+  </div>  <img src="update-banner.png" class="banner" alt="Update Banner">
+  <img src="promo-banner.png" class="promo-img" id="promoBanner" alt="Promo Banner">  <div class="section">
+    <b>Transfer & Cashout</b>
+    <div class="grid">
+      <div>Transfer Money</div>
+      <div>Add Money</div>
+      <div>Withdraw Cash</div>
+      <div>More Services</div>
+    </div>
+  </div>  <div class="section">
+    <b>Recharge & Bill Payments</b>
+    <div class="grid">
+      <div>Recharge Airtime</div>
+      <div>Buy Bundle</div>
+      <div>Pay Bill</div>
+      <div>Electricity</div>
+    </div>
+  </div>  <div class="bottom-nav">
+    <div>🏠 Home</div>
+    <div>📷 Scan</div>
+    <div>📄 History</div>
+    <div>☰ More</div>
+  </div>  <script>
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+    document.getElementById('userName').innerText = (user.name || 'USER').toUpperCase();
+    document.getElementById('userNumber').innerText = user.phone || '08000000000';
+    document.getElementById('userBalance').innerText = user.balance ? `₦${user.balance}` : '₦300.00';
 
-    <button class="btn logout-btn" onclick="logout()">🚪 Logout</button>
-
-    <div class="footer">© 2025 Airtel App</div>
-  </div>
-
-  <script>
-    let user;
-
-    function loadUser() {
-      user = JSON.parse(localStorage.getItem('user'));
-      if (!user) {
-        alert("Please log in.");
-        window.location.href = "login.html";
-        return;
-      }
-      document.getElementById('userName').textContent = user.name;
-      document.getElementById('userBalance').textContent = user.balance;
-    }
-
-    function logout() {
-      localStorage.removeItem('user');
-      alert("You have been logged out.");
-      window.location.href = "index.html";
-    }
-
-    function goTo(page) {
-      window.location.href = page;
-    }
-  </script>
-
-</body>
+    // Promo animation
+    const promo = document.getElementById('promoBanner');
+    setInterval(() => {
+      promo.style.display = promo.style.display === 'none' ? 'block' : 'none';
+    }, 5000);
+  </script></body>
 </html>
