@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard - Airtel App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff5f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h2 {
+      color: #d90000;
+      font-size: 24px;
+    }
+
+    .balance-card {
+      background-color: #d90000;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .balance-card h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .balance-card p {
+      font-size: 32px;
+      margin: 10px 0 0 0;
+      font-weight: bold;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      background-color: #d90000;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #b00000;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 12px;
+      color: #888;
+    }
+  </style>
+</head>
+<body onload="loadDashboard()">
+
+  <div class="header">
+    <h2>Welcome, <span id="userName">User</span></h2>
+  </div>
+
+  <div class="balance-card">
+    <h3>Your Balance</h3>
+    <p>₦<span id="userBalance">0</span></p>
+  </div>
+
+  <button class="btn" onclick="buyData()">📶 Buy Data (₦200)</button>
+  <button class="btn" onclick="buyAirtime()">💳 Buy Airtime (₦100)</button>
+  <button class="btn" onclick="logout()">🚪 Logout</button>
+
+  <div class="footer">© 2025 Airtel App</div>
+
+  <script>
+    let user;
+
+    function loadDashboard() {
+      user = JSON.parse(localStorage.getItem('user'));
+      if (!user) {
+        alert("Please log in.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      document.getElementById('userName').textContent = user.name;
+      updateBalanceDisplay();
+    }
+
+    function updateBalanceDisplay() {
+      document.getElementById('userBalance').textContent = user.balance;
+    }
+
+    function buyData() {
+      const cost = 200;
+      if (user.balance >= cost) {
+        user.balance -= cost;
+        localStorage.setItem('user', JSON.stringify(user));
+        updateBalanceDisplay();
+        alert("You have successfully purchased data!");
+      } else {
+        alert("Insufficient balance to buy data.");
+      }
+    }
+
+    function buyAirtime() {
+      const cost = 100;
+      if (user.balance >= cost) {
+        user.balance -= cost;
+        localStorage.setItem('user', JSON.stringify(user));
+        updateBalanceDisplay();
+        alert("You have successfully purchased airtime!");
+      } else {
+        alert("Insufficient balance to buy airtime.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('user');
+      alert("You have been logged out.");
+      window.location.href = "index.html";
+    }
+  </script>
+
+</body>
+</html>
