@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Emmy - Home</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+
+    body {
+      background: #fff;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      padding: 10px 15px;
+      border-bottom: 1px solid #ccc;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header h1 {
+      color: #1877f2;
+      font-size: 24px;
+    }
+
+    .icons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .icons i {
+      color: #000;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .loader-bar {
+      height: 3px;
+      width: 0;
+      background-color: #1877f2;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: width 0.5s;
+    }
+
+    .top-bar {
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: url('https://img.icons8.com/ios-filled/50/user.png') center/cover no-repeat;
+    }
+
+    .mind-box {
+      background: #f0f2f5;
+      flex: 1;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .gallery-icon {
+      font-size: 20px;
+      color: #000;
+    }
+
+    .story-section {
+      margin: 10px;
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+    }
+
+    .story-box {
+      min-width: 120px;
+      height: 180px;
+      background: #eee;
+      border-radius: 10px;
+      position: relative;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .story-box .profile-pic {
+      width: 35px;
+      height: 35px;
+      border: 2px solid #1877f2;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1;
+    }
+
+    .story-box .plus {
+      width: 20px;
+      height: 20px;
+      background: #1877f2;
+      color: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 5px;
+      left: 35px;
+      font-size: 14px;
+      text-align: center;
+      line-height: 20px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid #ccc;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+
+    footer i {
+      font-size: 22px;
+      color: #000;
+    }
+
+    .dim {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.2);
+      z-index: 2000;
+      display: none;
+    }
+
+  </style>
+  <script>
+    function navigate(page) {
+      document.querySelector('.loader-bar').style.width = '100%';
+      document.querySelector('.dim').style.display = 'block';
+      setTimeout(() => {
+        window.location.href = page;
+      }, 600);
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+  <div class="loader-bar"></div>
+  <div class="dim"></div>
+
+  <header>
+    <h1>Emmy</h1>
+    <div class="icons">
+      <i class="fas fa-search" onclick="navigate('search.html')"></i>
+      <i class="fab fa-facebook-messenger" onclick="navigate('messages.html')"></i>
+      <i class="fas fa-bars" onclick="navigate('menu.html')"></i>
+    </div>
+  </header>
+
+  <div class="top-bar">
+    <div class="profile-pic" onclick="navigate('profile.html')"></div>
+    <div class="mind-box" onclick="navigate('post.html')">What's on your mind?</div>
+    <i class="fas fa-image gallery-icon" onclick="navigate('gallery.html')"></i>
+  </div>
+
+  <div class="story-section">
+    <div class="story-box" onclick="navigate('story.html')">
+      <div class="profile-pic"></div>
+      <div class="plus">+</div>
+    </div>
+  </div>
+
+  <!-- Posts appear below ONLY when posted -->
+  <!-- Add your own JavaScript to load posts dynamically using Supabase -->
+
+  <footer>
+    <i class="fas fa-home" onclick="navigate('home.html')"></i>
+    <i class="fas fa-store" onclick="navigate('market.html')"></i>
+    <i class="fas fa-tv" onclick="navigate('watch.html')"></i>
+    <i class="fas fa-bell" onclick="navigate('notifications.html')"></i>
+    <i class="fas fa-bars" onclick="navigate('menu.html')"></i>
+  </footer>
+
+</body>
+</html>
