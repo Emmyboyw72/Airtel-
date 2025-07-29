@@ -1,0 +1,178 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <title>Facebook Profile</title>  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+  <!-- Firebase SDK -->  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>  
+  <!-- Icons -->  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />  
+  <style>  
+    body { margin: 0; font-family: sans-serif; background: #f0f2f5; }  
+    .header { background: #fff; padding: 10px; display: flex; align-items: center; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }  
+    .header i { font-size: 20px; margin-right: 15px; cursor: pointer; }  
+    .cover-container { position: relative; width: 100%; height: 200px; background: #ccc; }  
+    .cover-container img { width: 100%; height: 100%; object-fit: cover; }  
+    .cover-camera { position: absolute; bottom: 10px; right: 10px; background: #0006; padding: 5px; border-radius: 50%; color: #fff; cursor: pointer; }  
+    .profile-pic { position: relative; width: 130px; height: 130px; border-radius: 50%; overflow: hidden; border: 4px solid #fff; background: #fff; margin-top: -70px; margin-left: 20px; }  
+    .profile-pic img { width: 100%; height: 100%; object-fit: cover; }  
+    .profile-camera { position: absolute; bottom: 0; right: 0; background: #0006; color: #fff; padding: 5px; border-radius: 50%; cursor: pointer; }  
+    .name { margin: 10px 20px 0; font-size: 22px; font-weight: bold; }  
+    .about { margin: 5px 20px; color: gray; }  
+    .buttons { display: flex; gap: 10px; margin: 10px 20px; }  
+    .buttons button { flex: 1; padding: 10px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }  
+    .story-btn { background: #1877f2; color: white; }  
+    .edit-btn { background: #e4e6eb; color: black; }  
+    .tabs { display: flex; justify-content: space-around; background: white; margin-top: 10px; padding: 10px 0; }  
+    .tabs div { cursor: pointer; font-weight: bold; }  
+    .active-tab { border-bottom: 2px solid #1877f2; color: #1877f2; }  
+    .content { padding: 10px 20px; }  
+    .post-box { background: white; padding: 15px; margin-top: 10px; border-radius: 8px; }  
+    .ellipsis { float: right; font-size: 20px; cursor: pointer; margin-right: 20px; }  
+  </style>  
+</head>  
+<body>  
+  
+  <div class="header">  
+    <i class="fas fa-arrow-left" onclick="history.back()"></i>  
+    <div style="font-weight:bold;">Profile</div>  
+    <i class="fas fa-ellipsis-h ellipsis" onclick="openAboutEdit()"></i>  
+  </div>  
+  
+  <div class="cover-container">  
+    <img id="coverPhoto" src="https://via.placeholder.com/600x200" alt="Cover" />  
+    <label class="cover-camera">  
+      <i class="fas fa-camera"></i>  
+      <input type="file" accept="image/*" style="display:none" onchange="uploadCover(event)">  
+    </label>  
+  </div>  
+  
+  <div class="profile-pic">  
+    <img id="profilePhoto" src="https://via.placeholder.com/150" alt="Profile" />  
+    <label class="profile-camera">  
+      <i class="fas fa-camera"></i>  
+      <input type="file" accept="image/*" style="display:none" onchange="uploadProfile(event)">  
+    </label>  
+  </div>  
+  
+  <div class="name" id="userName">Your Name</div>  
+  <div class="about" id="userAbout">No about</div>  
+  
+  <div class="buttons">  
+    <button class="story-btn">+ Add to Story</button>  
+    <button class="edit-btn" onclick="editProfile()"><i class="fas fa-pencil-alt"></i> Edit Profile</button>  
+  </div>  
+  
+  <div class="tabs">  
+    <div id="tab-posts" class="active-tab" onclick="switchTab('posts')">Posts</div>  
+    <div id="tab-photos" onclick="switchTab('photos')">Photos</div>  
+    <div id="tab-videos" onclick="switchTab('videos')">Videos</div>  
+  </div>  
+  
+  <div class="content" id="tabContent">  
+    <!-- Posts will show here -->  
+  </div>  
+  
+  <!-- Firebase and Script -->  
+  <script>  
+    // Firebase config  
+    const firebaseConfig = {  
+      apiKey: "YOUR_API_KEY",  
+      authDomain: "YOUR_AUTH_DOMAIN",  
+      projectId: "YOUR_PROJECT_ID",  
+      storageBucket: "YOUR_STORAGE_BUCKET",  
+      messagingSenderId: "YOUR_MSG_ID",  
+      appId: "YOUR_APP_ID"  
+    };  
+    firebase.initializeApp(firebaseConfig);  
+    const auth = firebase.auth();  
+    const db = firebase.firestore();  
+    const storage = firebase.storage();  
+  
+    let currentUser;  
+    auth.onAuthStateChanged(user => {  
+      if (user) {  
+        currentUser = user;  
+        loadProfile(user);  
+        loadPosts();  
+      } else {  
+        alert("Please login first.");  
+        window.location.href = "login.html";  
+      }  
+    });  
+  
+    function loadProfile(user) {  
+      db.collection("users").doc(user.uid).get().then(doc => {  
+        if (doc.exists) {  
+          const data = doc.data();  
+          document.getElementById("userName").textContent = data.name || user.email;  
+          document.getElementById("userAbout").textContent = data.about || "No about";  
+          if (data.profilePic) document.getElementById("profilePhoto").src = data.profilePic;  
+          if (data.coverPic) document.getElementById("coverPhoto").src = data.coverPic;  
+        }  
+      });  
+    }  
+  
+    function uploadProfile(event) {  
+      const file = event.target.files[0];  
+      if (!file) return;  
+      const ref = storage.ref(`profiles/${currentUser.uid}/profile.jpg`);  
+      ref.put(file).then(() => ref.getDownloadURL()).then(url => {  
+        db.collection("users").doc(currentUser.uid).update({ profilePic: url });  
+        document.getElementById("profilePhoto").src = url;  
+      });  
+    }  
+  
+    function uploadCover(event) {  
+      const file = event.target.files[0];  
+      if (!file) return;  
+      const ref = storage.ref(`profiles/${currentUser.uid}/cover.jpg`);  
+      ref.put(file).then(() => ref.getDownloadURL()).then(url => {  
+        db.collection("users").doc(currentUser.uid).update({ coverPic: url });  
+        document.getElementById("coverPhoto").src = url;  
+      });  
+    }  
+  
+    function editProfile() {  
+      const about = prompt("Enter your about:");  
+      if (about) {  
+        db.collection("users").doc(currentUser.uid).update({ about });  
+        document.getElementById("userAbout").textContent = about;  
+      }  
+    }  
+  
+    function switchTab(tab) {  
+      document.querySelectorAll('.tabs div').forEach(el => el.classList.remove("active-tab"));  
+      document.getElementById("tab-" + tab).classList.add("active-tab");  
+  
+      const content = document.getElementById("tabContent");  
+      content.innerHTML = "";  
+  
+      if (tab === "posts") loadPosts();  
+      else if (tab === "photos") loadMedia("image");  
+      else if (tab === "videos") loadMedia("video");  
+    }  
+  
+    function loadPosts() {  
+      const content = document.getElementById("tabContent");  
+      db.collection("posts").where("uid", "==", currentUser.uid).get().then(snapshot => {  
+        if (snapshot.empty) content.innerHTML = "<p>No posts yet.</p>";  
+        snapshot.forEach(doc => {  
+          const post = doc.data();  
+          const box = document.createElement("div");  
+          box.className = "post-box";  
+          box.innerHTML = `<p>${post.text || ''}</p>` +  
+            (post.mediaURL ? `<${post.type === "video" ? "video" : "img"} src="${post.mediaURL}" controls style="max-width:100%"/>` : '');  
+          content.appendChild(box);  
+        });  
+      });  
+    }  
+  
+    function loadMedia(type) {  
+      const content = document.getElementById("tabContent");  
+      db.collection("posts").where("uid", "==", currentUser.uid).where("type", "==", type).get().then(snapshot => {  
+        if (snapshot.empty

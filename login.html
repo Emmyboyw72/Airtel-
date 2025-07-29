@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign Up - Emmy</title>
+  <title>Login - Emmy</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f2f5;
+      background: #e9eff6;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-    .signup-box {
+    .login-box {
       background: white;
       padding: 25px;
       border-radius: 10px;
@@ -59,24 +59,21 @@
   </style>
 </head>
 <body>
-  <div class="signup-box">
-    <h2>Create Account</h2>
-    <input type="text" id="first" placeholder="First Name">
-    <input type="text" id="last" placeholder="Last Name">
-    <input type="number" id="age" placeholder="Age">
+  <div class="login-box">
+    <h2>Login</h2>
     <input type="email" id="email" placeholder="Gmail">
     <input type="password" id="password" placeholder="Password">
-    <button onclick="signUp()">Sign Up</button>
+    <button onclick="login()">Login</button>
     <div class="success" id="success"></div>
     <div class="error" id="error"></div>
     <div class="bottom-text">
-      Already have an account? <a href="login.html">Login</a>
+      Don’t have an account? <a href="signup.html">Sign up</a>
     </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDQKru9odtZHvGrFW376-KnBnCTmRWpuKQ",
@@ -90,13 +87,13 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    window.signUp = function () {
+    window.login = function () {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
-      createUserWithEmailAndPassword(auth, email, password)
+      signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          document.getElementById('success').innerText = "Sign up successful! Redirecting...";
+          document.getElementById('success').innerText = "Login successful! Redirecting...";
           document.getElementById('error').innerText = "";
           setTimeout(() => {
             window.location.href = "dashboard.html";

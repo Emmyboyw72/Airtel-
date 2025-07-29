@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emmmy - Facebook Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #f0f2f5;
+    }
+    header {
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    header h1 {
+      color: #1877f2;
+      font-size: 22px;
+    }
+    .header-icons i {
+      font-size: 20px;
+      margin-left: 15px;
+      color: #050505;
+      cursor: pointer;
+    }
+    .post-entry {
+      background: white;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      border-top: 1px solid #ccc;
+    }
+    .post-entry .profile-pic {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: #ddd;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .post-entry input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .post-entry i {
+      font-size: 18px;
+      color: #65676b;
+      cursor: pointer;
+    }
+    .story-container {
+      display: flex;
+      overflow-x: auto;
+      padding: 10px 5px;
+      background-color: white;
+    }
+    .story {
+      width: 110px;
+      height: 200px;
+      background-color: white;
+      border-radius: 10px;
+      margin-right: 10px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #ccc;
+    }
+    .story.my-story {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .story.my-story .fa-plus {
+      background-color: #1877f2;
+      color: white;
+      border-radius: 50%;
+      padding: 10px;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .story.my-story span {
+      font-size: 14px;
+      color: #555;
+    }
+    .story .profile-pic-small {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      border: 2px solid #1877f2;
+    }
+    .feed {
+      margin-top: 10px;
+      padding: 0 10px;
+    }
+    .post {
+      background-color: white;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .post-header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .post img {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+    .post .actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+    }
+    .post .actions i {
+      font-size: 18px;
+      cursor: pointer;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    }
+    footer i {
+      font-size: 22px;
+      color: #606770;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>  <header>
+    <h1>Emmmy</h1>
+    <div class="header-icons">
+      <i class="fas fa-search" onclick="alert('Search feature coming soon')"></i>
+      <i class="fab fa-facebook-messenger" onclick="location.href='messages.html'"></i>
+      <i class="fas fa-bars" onclick="location.href='menu.html'"></i>
+    </div>
+  </header>  <div class="post-entry">
+    <div class="profile-pic" onclick="location.href='profile.html'"></div>
+    <input type="text" placeholder="What's on your mind?" onclick="window.location.href='new-post.html'" />
+    <i class="far fa-image" onclick="window.location.href='new-post.html'"></i>
+  </div>  <div class="story-container">
+    <div class="story my-story" onclick="window.location.href='add-story.html'">
+      <i class="fas fa-plus"></i>
+      <span>Upload your story</span>
+    </div>
+    <div class="story">
+      <img src="profile1.jpg" alt="User" class="profile-pic-small" />
+    </div>
+    <div class="story">
+      <img src="profile2.jpg" alt="User" class="profile-pic-small" />
+    </div>
+  </div>  <div class="feed" id="feed"></div>  <footer>
+    <i class="fas fa-home" onclick="location.href='dashboard.html'"></i>
+    <i class="fas fa-store" onclick="location.href='marketplace.html'"></i>
+    <i class="fas fa-tv" onclick="location.href='watch.html'"></i>
+    <i class="fas fa-bell" onclick="location.href='notifications.html'"></i>
+    <i class="fas fa-bars" onclick="location.href='menu.html'"></i>
+  </footer>  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const feed = document.getElementById('feed');
+    const postsQuery = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
+
+    onSnapshot(postsQuery, (snapshot) => {
+      feed.innerHTML = '';
+      snapshot.forEach((doc) => {
+        const post = doc.data();
+        const postId = doc.id;
+        const postDiv = document.createElement('div');
+        postDiv.className = 'post';
+        postDiv.innerHTML = `
+          <div class="post-header">
+            <img src="profile.jpg" alt="Profile" />
+            <div>
+              <strong>${post.username || 'Anonymous'}</strong><br />
+              <small>${new Date(post.timestamp?.toDate()).toLocaleString()}</small>
+            </div>
+          </div>
+          <p>${post.text || ''}</p>
+          ${post.image ? `<img src="${post.image}" />` : ''}
+          <div class="actions">
+            <i class="fas fa-thumbs-up"></i>
+            <i class="fas fa-comment" onclick="location.href='comment.html?id=${postId}'"></i>
+            <i class="fas fa-share"></i>
+          </div>
+        `;
+        feed.appendChild(postDiv);
+      });
+    });
+  </script></body>
+</html>
