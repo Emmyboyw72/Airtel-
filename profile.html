@@ -1,178 +1,165 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-  <meta charset="UTF-8" />  
-  <title>Facebook Profile</title>  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
-  <!-- Firebase SDK -->  
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>  
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>  
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>  
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>  
-  <!-- Icons -->  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />  
-  <style>  
-    body { margin: 0; font-family: sans-serif; background: #f0f2f5; }  
-    .header { background: #fff; padding: 10px; display: flex; align-items: center; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }  
-    .header i { font-size: 20px; margin-right: 15px; cursor: pointer; }  
-    .cover-container { position: relative; width: 100%; height: 200px; background: #ccc; }  
-    .cover-container img { width: 100%; height: 100%; object-fit: cover; }  
-    .cover-camera { position: absolute; bottom: 10px; right: 10px; background: #0006; padding: 5px; border-radius: 50%; color: #fff; cursor: pointer; }  
-    .profile-pic { position: relative; width: 130px; height: 130px; border-radius: 50%; overflow: hidden; border: 4px solid #fff; background: #fff; margin-top: -70px; margin-left: 20px; }  
-    .profile-pic img { width: 100%; height: 100%; object-fit: cover; }  
-    .profile-camera { position: absolute; bottom: 0; right: 0; background: #0006; color: #fff; padding: 5px; border-radius: 50%; cursor: pointer; }  
-    .name { margin: 10px 20px 0; font-size: 22px; font-weight: bold; }  
-    .about { margin: 5px 20px; color: gray; }  
-    .buttons { display: flex; gap: 10px; margin: 10px 20px; }  
-    .buttons button { flex: 1; padding: 10px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }  
-    .story-btn { background: #1877f2; color: white; }  
-    .edit-btn { background: #e4e6eb; color: black; }  
-    .tabs { display: flex; justify-content: space-around; background: white; margin-top: 10px; padding: 10px 0; }  
-    .tabs div { cursor: pointer; font-weight: bold; }  
-    .active-tab { border-bottom: 2px solid #1877f2; color: #1877f2; }  
-    .content { padding: 10px 20px; }  
-    .post-box { background: white; padding: 15px; margin-top: 10px; border-radius: 8px; }  
-    .ellipsis { float: right; font-size: 20px; cursor: pointer; margin-right: 20px; }  
-  </style>  
-</head>  
-<body>  
-  
-  <div class="header">  
-    <i class="fas fa-arrow-left" onclick="history.back()"></i>  
-    <div style="font-weight:bold;">Profile</div>  
-    <i class="fas fa-ellipsis-h ellipsis" onclick="openAboutEdit()"></i>  
-  </div>  
-  
-  <div class="cover-container">  
-    <img id="coverPhoto" src="https://via.placeholder.com/600x200" alt="Cover" />  
-    <label class="cover-camera">  
-      <i class="fas fa-camera"></i>  
-      <input type="file" accept="image/*" style="display:none" onchange="uploadCover(event)">  
-    </label>  
-  </div>  
-  
-  <div class="profile-pic">  
-    <img id="profilePhoto" src="https://via.placeholder.com/150" alt="Profile" />  
-    <label class="profile-camera">  
-      <i class="fas fa-camera"></i>  
-      <input type="file" accept="image/*" style="display:none" onchange="uploadProfile(event)">  
-    </label>  
-  </div>  
-  
-  <div class="name" id="userName">Your Name</div>  
-  <div class="about" id="userAbout">No about</div>  
-  
-  <div class="buttons">  
-    <button class="story-btn">+ Add to Story</button>  
-    <button class="edit-btn" onclick="editProfile()"><i class="fas fa-pencil-alt"></i> Edit Profile</button>  
-  </div>  
-  
-  <div class="tabs">  
-    <div id="tab-posts" class="active-tab" onclick="switchTab('posts')">Posts</div>  
-    <div id="tab-photos" onclick="switchTab('photos')">Photos</div>  
-    <div id="tab-videos" onclick="switchTab('videos')">Videos</div>  
-  </div>  
-  
-  <div class="content" id="tabContent">  
-    <!-- Posts will show here -->  
-  </div>  
-  
-  <!-- Firebase and Script -->  
-  <script>  
-    // Firebase config  
-    const firebaseConfig = {  
-      apiKey: "YOUR_API_KEY",  
-      authDomain: "YOUR_AUTH_DOMAIN",  
-      projectId: "YOUR_PROJECT_ID",  
-      storageBucket: "YOUR_STORAGE_BUCKET",  
-      messagingSenderId: "YOUR_MSG_ID",  
-      appId: "YOUR_APP_ID"  
-    };  
-    firebase.initializeApp(firebaseConfig);  
-    const auth = firebase.auth();  
-    const db = firebase.firestore();  
-    const storage = firebase.storage();  
-  
-    let currentUser;  
-    auth.onAuthStateChanged(user => {  
-      if (user) {  
-        currentUser = user;  
-        loadProfile(user);  
-        loadPosts();  
-      } else {  
-        alert("Please login first.");  
-        window.location.href = "login.html";  
-      }  
-    });  
-  
-    function loadProfile(user) {  
-      db.collection("users").doc(user.uid).get().then(doc => {  
-        if (doc.exists) {  
-          const data = doc.data();  
-          document.getElementById("userName").textContent = data.name || user.email;  
-          document.getElementById("userAbout").textContent = data.about || "No about";  
-          if (data.profilePic) document.getElementById("profilePhoto").src = data.profilePic;  
-          if (data.coverPic) document.getElementById("coverPhoto").src = data.coverPic;  
-        }  
-      });  
-    }  
-  
-    function uploadProfile(event) {  
-      const file = event.target.files[0];  
-      if (!file) return;  
-      const ref = storage.ref(`profiles/${currentUser.uid}/profile.jpg`);  
-      ref.put(file).then(() => ref.getDownloadURL()).then(url => {  
-        db.collection("users").doc(currentUser.uid).update({ profilePic: url });  
-        document.getElementById("profilePhoto").src = url;  
-      });  
-    }  
-  
-    function uploadCover(event) {  
-      const file = event.target.files[0];  
-      if (!file) return;  
-      const ref = storage.ref(`profiles/${currentUser.uid}/cover.jpg`);  
-      ref.put(file).then(() => ref.getDownloadURL()).then(url => {  
-        db.collection("users").doc(currentUser.uid).update({ coverPic: url });  
-        document.getElementById("coverPhoto").src = url;  
-      });  
-    }  
-  
-    function editProfile() {  
-      const about = prompt("Enter your about:");  
-      if (about) {  
-        db.collection("users").doc(currentUser.uid).update({ about });  
-        document.getElementById("userAbout").textContent = about;  
-      }  
-    }  
-  
-    function switchTab(tab) {  
-      document.querySelectorAll('.tabs div').forEach(el => el.classList.remove("active-tab"));  
-      document.getElementById("tab-" + tab).classList.add("active-tab");  
-  
-      const content = document.getElementById("tabContent");  
-      content.innerHTML = "";  
-  
-      if (tab === "posts") loadPosts();  
-      else if (tab === "photos") loadMedia("image");  
-      else if (tab === "videos") loadMedia("video");  
-    }  
-  
-    function loadPosts() {  
-      const content = document.getElementById("tabContent");  
-      db.collection("posts").where("uid", "==", currentUser.uid).get().then(snapshot => {  
-        if (snapshot.empty) content.innerHTML = "<p>No posts yet.</p>";  
-        snapshot.forEach(doc => {  
-          const post = doc.data();  
-          const box = document.createElement("div");  
-          box.className = "post-box";  
-          box.innerHTML = `<p>${post.text || ''}</p>` +  
-            (post.mediaURL ? `<${post.type === "video" ? "video" : "img"} src="${post.mediaURL}" controls style="max-width:100%"/>` : '');  
-          content.appendChild(box);  
-        });  
-      });  
-    }  
-  
-    function loadMedia(type) {  
-      const content = document.getElementById("tabContent");  
-      db.collection("posts").where("uid", "==", currentUser.uid).where("type", "==", type).get().then(snapshot => {  
-        if (snapshot.empty
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile - TikTok Style</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }.profile-header {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #333;
+}
+
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+}
+
+.username {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.bio {
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+  color: #ccc;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat h4 {
+  margin: 0;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.buttons button {
+  background-color: #222;
+  color: white;
+  border: 1px solid #555;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 1rem;
+}
+
+.video-grid video {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+  </style>
+</head>
+<body>
+  <div class="profile-header">
+    <img src="https://via.placeholder.com/100" class="profile-pic" id="profile-pic" alt="Profile Picture">
+    <div class="username" id="username">@username</div>
+    <div class="bio" id="bio">This is your bio</div><div class="stats">
+  <div class="stat">
+    <h4 id="followers">0</h4>
+    <p>Followers</p>
+  </div>
+  <div class="stat">
+    <h4 id="following">0</h4>
+    <p>Following</p>
+  </div>
+  <div class="stat">
+    <h4 id="likes">0</h4>
+    <p>Likes</p>
+  </div>
+</div>
+
+<div class="buttons">
+  <button onclick="editProfile()">Edit Profile</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
+  </div>  <div class="video-grid" id="video-grid">
+    <!-- Videos will be loaded here -->
+  </div>  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://YOUR-SUPABASE-URL.supabase.co';
+    const supabaseKey = 'YOUR-SUPABASE-ANON-KEY';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const userId = localStorage.getItem('user_id');
+
+    async function loadProfile() {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (profile) {
+        document.getElementById('username').innerText = `@${profile.username}`;
+        document.getElementById('bio').innerText = profile.bio || 'No bio yet';
+        document.getElementById('profile-pic').src = profile.avatar_url || 'https://via.placeholder.com/100';
+        document.getElementById('followers').innerText = profile.followers || 0;
+        document.getElementById('following').innerText = profile.following || 0;
+        document.getElementById('likes').innerText = profile.likes || 0;
+      }
+    }
+
+    async function loadVideos() {
+      const { data: videos } = await supabase
+        .from('videos')
+        .select('*')
+        .eq('user_id', userId);
+
+      const grid = document.getElementById('video-grid');
+      grid.innerHTML = '';
+
+      videos.forEach(video => {
+        const vid = document.createElement('video');
+        vid.src = video.video_url;
+        vid.controls = true;
+        grid.appendChild(vid);
+      });
+    }
+
+    function editProfile() {
+      window.location.href = 'edit-profile.html';
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    loadProfile();
+    loadVideos();
+  </script></body>
+</html>

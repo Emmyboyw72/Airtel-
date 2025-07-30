@@ -21,6 +21,22 @@
       align-items: center;
       height: 100vh;
       text-align: center;
+      position: relative;
+    }
+
+    .top-loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background-color: #1877f2;
+      animation: loadBar 3s linear forwards;
+    }
+
+    @keyframes loadBar {
+      0% { width: 0%; }
+      100% { width: 100%; }
     }
 
     .logo {
@@ -73,6 +89,7 @@
   </style>
 </head>
 <body>
+  <div class="top-loader"></div>
   <div class="logo">E</div>
 
   <div class="dots">
@@ -84,6 +101,7 @@
   <div class="meta">from Meta</div>
 
   <script>
+    // After loader completes, redirect based on user existence
     setTimeout(() => {
       const user = localStorage.getItem("user");
       if (user) {
