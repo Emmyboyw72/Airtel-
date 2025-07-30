@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,104 +11,133 @@
       color: #fff;
       margin: 0;
       font-family: Arial, sans-serif;
-    }.profile-header {
-  padding: 1rem;
-  text-align: center;
-  border-bottom: 1px solid #333;
-}
+    }
 
-.profile-pic {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 3px solid #fff;
-  object-fit: cover;
-  margin-bottom: 0.5rem;
-}
+    .profile-header {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid #333;
+      position: relative;
+    }
 
-.username {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
+    .profile-pic-container {
+      position: relative;
+      display: inline-block;
+    }
 
-.bio {
-  font-size: 0.9rem;
-  margin-top: 0.3rem;
-  color: #ccc;
-}
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      object-fit: cover;
+    }
 
-.stats {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 1rem;
-}
+    .camera-icon {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: #007bff;
+      border-radius: 50%;
+      padding: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
 
-.stat {
-  text-align: center;
-}
+    .username {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
 
-.stat h4 {
-  margin: 0;
-}
+    .bio {
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+      color: #ccc;
+    }
 
-.buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1rem;
+    }
 
-.buttons button {
-  background-color: #222;
-  color: white;
-  border: 1px solid #555;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  cursor: pointer;
-}
+    .stat {
+      text-align: center;
+    }
 
-.video-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  margin-top: 1rem;
-}
+    .stat h4 {
+      margin: 0;
+    }
 
-.video-grid video {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
 
+    .buttons button {
+      background-color: #222;
+      color: white;
+      border: 1px solid #555;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 1rem;
+    }
+
+    .video-grid video {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="profile-header">
-    <img src="https://via.placeholder.com/100" class="profile-pic" id="profile-pic" alt="Profile Picture">
+    <div class="profile-pic-container">
+      <img src="https://via.placeholder.com/100" class="profile-pic" id="profile-pic" alt="Profile Picture">
+      <label for="avatar-upload" class="camera-icon"><i class="fas fa-camera"></i></label>
+      <input type="file" id="avatar-upload" accept="image/*" />
+    </div>
     <div class="username" id="username">@username</div>
-    <div class="bio" id="bio">This is your bio</div><div class="stats">
-  <div class="stat">
-    <h4 id="followers">0</h4>
-    <p>Followers</p>
-  </div>
-  <div class="stat">
-    <h4 id="following">0</h4>
-    <p>Following</p>
-  </div>
-  <div class="stat">
-    <h4 id="likes">0</h4>
-    <p>Likes</p>
-  </div>
-</div>
+    <div class="bio" id="bio">This is your bio</div>
 
-<div class="buttons">
-  <button onclick="editProfile()">Edit Profile</button>
-  <button onclick="logout()">Logout</button>
-</div>
+    <div class="stats">
+      <div class="stat">
+        <h4 id="followers">0</h4>
+        <p>Followers</p>
+      </div>
+      <div class="stat">
+        <h4 id="following">0</h4>
+        <p>Following</p>
+      </div>
+      <div class="stat">
+        <h4 id="likes">0</h4>
+        <p>Likes</p>
+      </div>
+    </div>
 
-  </div>  <div class="video-grid" id="video-grid">
-    <!-- Videos will be loaded here -->
-  </div>  <script type="module">
+    <div class="buttons">
+      <button onclick="editProfile()">Edit Profile</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="video-grid" id="video-grid"></div>
+
+  <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://YOUR-SUPABASE-URL.supabase.co';
@@ -150,6 +180,36 @@
       });
     }
 
+    // Upload new profile picture
+    document.getElementById('avatar-upload').addEventListener('change', async function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileExt = file.name.split('.').pop();
+      const filePath = `avatars/${userId}.${fileExt}`;
+
+      let { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) {
+        alert('Upload failed: ' + uploadError.message);
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase
+        .storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', userId);
+
+      document.getElementById('profile-pic').src = publicUrl;
+    });
+
     function editProfile() {
       window.location.href = 'edit-profile.html';
     }
@@ -161,5 +221,6 @@
 
     loadProfile();
     loadVideos();
-  </script></body>
+  </script>
+</body>
 </html>
