@@ -1,115 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Welcome</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Helvetica, Arial, sans-serif;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Glovo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      background-color: #ffffff;
-      color: #1877f2;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      position: relative;
-    }
+        body {
+            background-color: #e50914; /* Glovo red */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            color: white;
+        }
 
-    .top-loader {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0%;
-      height: 3px;
-      background-color: #1877f2;
-      animation: loadBar 3s linear forwards;
-    }
+        .brand-title {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
 
-    @keyframes loadBar {
-      0% { width: 0%; }
-      100% { width: 100%; }
-    }
+        .food-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
 
-    .logo {
-      font-size: 100px;
-      font-weight: bold;
-      margin-bottom: 40px;
-    }
+        .food-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 16px;
+            animation: spin 8s linear infinite;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            border: 3px solid white;
+        }
 
-    .dots {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 60px;
-    }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-    .dot {
-      width: 12px;
-      height: 12px;
-      background-color: #1877f2;
-      border-radius: 50%;
-      animation: bounce 1.4s infinite ease-in-out both;
-    }
+        .loader {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+        }
 
-    .dot:nth-child(1) {
-      animation-delay: -0.32s;
-    }
+        .dot {
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite both;
+        }
 
-    .dot:nth-child(2) {
-      animation-delay: -0.16s;
-    }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        .dot:nth-child(3) { animation-delay: 0s; }
 
-    .dot:nth-child(3) {
-      animation-delay: 0;
-    }
-
-    @keyframes bounce {
-      0%, 80%, 100% {
-        transform: scale(0);
-      }
-      40% {
-        transform: scale(1);
-      }
-    }
-
-    .meta {
-      position: absolute;
-      bottom: 30px;
-      font-size: 14px;
-      color: #999;
-    }
-  </style>
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="top-loader"></div>
-  <div class="logo">E</div>
+    <div class="brand-title">Glovo</div>
 
-  <div class="dots">
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-  </div>
+    <div class="food-container">
+        <!-- 🍽️ Beautiful food image with fork & spoon -->
+        <img
+            src="https://unsplash.com/photos/a-plate-of-food-with-a-fork-and-a-spoon-2lboyunY0cw"
+            alt="Delicious meal with fork and spoon"
+            class="food-image"
+        />
+    </div>
 
-  <div class="meta">from Meta</div>
+    <div class="loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
 
-  <script>
-    // After loader completes, redirect based on user existence
-    setTimeout(() => {
-      const user = localStorage.getItem("user");
-      if (user) {
-        window.location.href = "home.html"; // Already signed in
-      } else {
-        window.location.href = "signup.html"; // Not signed up yet
-      }
-    }, 3000);
-  </script>
+    <!-- Firebase via CDN -->
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyASOh_kA_d_L3T3L78Lvid0rjLKccKVFpw",
+            authDomain: "glovo-a0ea4.firebaseapp.com",
+            projectId: "glovo-a0ea4",
+            storageBucket: "glovo-a0ea4.firebasestorage.app",
+            messagingSenderId: "737022109409",
+            appId: "1:737022109409:web:84a0966d3681f3960479a0",
+            measurementId: "G-W2BMB39T29"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+            const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+            if (isSignedIn) {
+                window.location.href = 'dashboard.html';
+            } else {
+                window.location.href = 'signup.html';
+            }
+        }, 2000);
+    </script>
 </body>
 </html>
+<div>you are on the right track</div>
+<div>...thanks for your patronage...</div>

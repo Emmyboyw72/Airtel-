@@ -1,237 +1,673 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Emmmy - Facebook Home</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      background-color: #f0f2f5;
-    }
-    header {
-      background-color: #ffffff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 15px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    header h1 {
-      color: #1877f2;
-      font-size: 22px;
-    }
-    .header-icons i {
-      font-size: 20px;
-      margin-left: 15px;
-      color: #050505;
-      cursor: pointer;
-    }
-    .post-entry {
-      background: white;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
-      border-top: 1px solid #ccc;
-    }
-    .post-entry .profile-pic {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background-color: #ddd;
-      margin-right: 10px;
-      cursor: pointer;
-    }
-    .post-entry input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-      margin-right: 10px;
-      cursor: pointer;
-    }
-    .post-entry i {
-      font-size: 18px;
-      color: #65676b;
-      cursor: pointer;
-    }
-    .story-container {
-      display: flex;
-      overflow-x: auto;
-      padding: 10px 5px;
-      background-color: white;
-    }
-    .story {
-      width: 110px;
-      height: 200px;
-      background-color: white;
-      border-radius: 10px;
-      margin-right: 10px;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid #ccc;
-    }
-    .story.my-story {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
-    .story.my-story .fa-plus {
-      background-color: #1877f2;
-      color: white;
-      border-radius: 50%;
-      padding: 10px;
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-    .story.my-story span {
-      font-size: 14px;
-      color: #555;
-    }
-    .story .profile-pic-small {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      border: 2px solid #1877f2;
-    }
-    .feed {
-      margin-top: 10px;
-      padding: 0 10px;
-    }
-    .post {
-      background-color: white;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    .post-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .post-header img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-    .post img {
-      width: 100%;
-      margin-top: 10px;
-      border-radius: 10px;
-    }
-    .post .actions {
-      display: flex;
-      justify-content: space-between;
-      padding: 5px 0;
-    }
-    .post .actions i {
-      font-size: 18px;
-      cursor: pointer;
-    }
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background-color: white;
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 0;
-      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    }
-    footer i {
-      font-size: 22px;
-      color: #606770;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard – Glovo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #fff9f9;
+            color: #333;
+            padding-bottom: 70px;
+        }
+
+        header {
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ffeaa7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        #postBtn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #e50914;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 90;
+        }
+
+        .feed {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .post-container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .post {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #f0f0f0;
+            position: relative;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(229, 9, 20, 0.8);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .post:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .post-body {
+            padding: 16px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fab1a0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-username {
+            font-weight: bold;
+            color: #e50914;
+            font-size: 16px;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .post-content {
+            margin: 12px 0;
+            line-height: 1.6;
+            font-size: 16px;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 12px 0;
+        }
+
+        .stat-badge {
+            background: #ffebee;
+            color: #c62828;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 12px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #555;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .action-btn.liked i {
+            color: #e50914 !important;
+        }
+
+        .empty-feed {
+            text-align: center;
+            color: #888;
+            font-size: 18px;
+            margin-top: 40px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .footer-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .footer-btn.active {
+            color: #e50914;
+            font-weight: bold;
+        }
+
+        .footer-btn i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            padding: 24px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            text-align: center;
+            max-width: 90%;
+            font-size: 18px;
+        }
+
+        .alert.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #00c853, #007e33);
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+        }
+
+        .alert-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        #postPopup, #deletePopup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .popup-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #e50914;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            resize: none;
+            height: 100px;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .btn-post, .btn-delete {
+            color: white;
+        }
+
+        .btn-post {
+            background: #e50914;
+        }
+
+        .btn-delete {
+            background: #d32f2f;
+        }
+    </style>
 </head>
-<body>  <header>
-    <h1>Emmmy</h1>
-    <div class="header-icons">
-      <i class="fas fa-search" onclick="alert('Search feature coming soon')"></i>
-      <i class="fab fa-facebook-messenger" onclick="location.href='messages.html'"></i>
-      <i class="fas fa-bars" onclick="location.href='menu.html'"></i>
-    </div>
-  </header>  <div class="post-entry">
-    <div class="profile-pic" onclick="location.href='profile.html'"></div>
-    <input type="text" placeholder="What's on your mind?" onclick="window.location.href='new-post.html'" />
-    <i class="far fa-image" onclick="window.location.href='new-post.html'"></i>
-  </div>  <div class="story-container">
-    <div class="story my-story" onclick="window.location.href='add-story.html'">
-      <i class="fas fa-plus"></i>
-      <span>Upload your story</span>
-    </div>
-    <div class="story">
-      <img src="profile1.jpg" alt="User" class="profile-pic-small" />
-    </div>
-    <div class="story">
-      <img src="profile2.jpg" alt="User" class="profile-pic-small" />
-    </div>
-  </div>  <div class="feed" id="feed"></div>  <footer>
-    <i class="fas fa-home" onclick="location.href='dashboard.html'"></i>
-    <i class="fas fa-store" onclick="location.href='marketplace.html'"></i>
-    <i class="fas fa-tv" onclick="location.href='watch.html'"></i>
-    <i class="fas fa-bell" onclick="location.href='notifications.html'"></i>
-    <i class="fas fa-bars" onclick="location.href='menu.html'"></i>
-  </footer>  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<body>
 
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
+    <header>
+        <div class="header-title">Glovo</div>
+        <a href="profile.html" class="profile-icon" id="headerUserInitial">U</a>
+    </header>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    <div id="postBtn" style="display: none;">
+        <i class="fas fa-plus"></i>
+    </div>
 
-    const feed = document.getElementById('feed');
-    const postsQuery = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
+    <div class="feed" id="feed">
+        <!-- Posts will appear here -->
+    </div>
 
-    onSnapshot(postsQuery, (snapshot) => {
-      feed.innerHTML = '';
-      snapshot.forEach((doc) => {
-        const post = doc.data();
-        const postId = doc.id;
-        const postDiv = document.createElement('div');
-        postDiv.className = 'post';
-        postDiv.innerHTML = `
-          <div class="post-header">
-            <img src="profile.jpg" alt="Profile" />
-            <div>
-              <strong>${post.username || 'Anonymous'}</strong><br />
-              <small>${new Date(post.timestamp?.toDate()).toLocaleString()}</small>
+    <div id="alert" class="alert">
+        <span class="alert-icon">✨</span>
+        <span id="alert-message">Action completed!</span>
+    </div>
+
+    <!-- Post Popup -->
+    <div id="postPopup">
+        <div class="popup-content">
+            <div class="popup-title">Create Post</div>
+            <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+            <div class="popup-buttons">
+                <button class="btn-cancel" onclick="closePopup('postPopup')">Cancel</button>
+                <button class="btn-post" onclick="createPost()">Post</button>
             </div>
-          </div>
-          <p>${post.text || ''}</p>
-          ${post.image ? `<img src="${post.image}" />` : ''}
-          <div class="actions">
-            <i class="fas fa-thumbs-up"></i>
-            <i class="fas fa-comment" onclick="location.href='comment.html?id=${postId}'"></i>
-            <i class="fas fa-share"></i>
-          </div>
-        `;
-        feed.appendChild(postDiv);
-      });
-    });
-  </script></body>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Popup -->
+    <div id="deletePopup">
+        <div class="popup-content">
+            <div class="popup-title">Delete Post?</div>
+            <p style="text-align:center; margin-bottom:20px;">This post is against our community guidelines.</p>
+            <div class="popup-buttons">
+                <button class="btn-cancel" onclick="closePopup('deletePopup')">Cancel</button>
+                <button class="btn-delete" onclick="confirmDeletePost()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="likeSound" preload="auto"></audio>
+
+    <footer>
+        <a href="dashboard.html" class="footer-btn active">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="friends.html" class="footer-btn">
+            <i class="fas fa-users"></i> Friends
+        </a>
+        <a href="market.html" class="footer-btn">
+            <i class="fas fa-shopping-bag"></i> Market
+        </a>
+        <a href="notifications.html" class="footer-btn" id="notifFooterBtn">
+            <i class="fas fa-bell"></i> Alerts
+        </a>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, query, orderBy, getDocs, addDoc, serverTimestamp, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyASOh_kA_d_L3T3L78Lvid0rjLKccKVFpw",
+            authDomain: "glovo-a0ea4.firebaseapp.com",
+            projectId: "glovo-a0ea4",
+            storageBucket: "glovo-a0ea4.firebasestorage.app",
+            messagingSenderId: "737022109409",
+            appId: "1:737022109409:web:84a0966d3681f3960479a0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const ADMIN_EMAIL = "bluepay863@gmail.com";
+        let currentUser = null;
+        let postToDelete = null;
+        const likedPosts = new Set(); // Track liked posts in this session
+
+        const foodImages = [
+            "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
+            "https://images.unsplash.com/photo-1565299624946-b2f2b8c5e7a6",
+            "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
+            "https://images.unsplash.com/photo-1606755962773-d324e0a13086",
+            "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+            "https://images.unsplash.com/photo-1563245372-f60088942622",
+            "https://images.unsplash.com/photo-1547592167-2c8c2a8a8a8a",
+            "https://images.unsplash.com/photo-1603133872878-684f20873a82",
+            "https://images.unsplash.com/photo-1565958011703-44f9829ba187",
+            "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2",
+            "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
+            "https://images.unsplash.com/photo-1528735602780-2552fd46c7af",
+            "https://images.unsplash.com/photo-1562967917-995d8c8765b9",
+            "https://images.unsplash.com/photo-1563379973274-94c2c6a61a33",
+            "https://images.unsplash.com/photo-1556911220-e15b29be8c8f",
+            "https://images.unsplash.com/photo-1557804506-669a67965ba0",
+            "https://images.unsplash.com/photo-1562967916-9b5d5b8c8b5e",
+            "https://images.unsplash.com/photo-1626082927389-6cd3e2e7b7c5",
+            "https://images.unsplash.com/photo-1603532648955-a0f9a5e7c7e0",
+            "https://images.unsplash.com/photo-1565557623262-b5193d9e68c0",
+            "https://images.unsplash.com/photo-1578985545062-69928b1d9587",
+            "https://images.unsplash.com/photo-1606312619070-d48b4c652a52",
+            "https://images.unsplash.com/photo-1633332758227-9c7e73a2d5f0",
+            "https://images.unsplash.com/photo-1603302576718-8e5e9e8e9e8e",
+            "https://images.unsplash.com/photo-1584132960527-9a9e5a8c8f0a",
+            "https://images.unsplash.com/photo-1605256789628-955f0d5c5a9e",
+            "https://images.unsplash.com/photo-1600271886742-f049cd55a5d4",
+            "https://images.unsplash.com/photo-1595008937846-8a6e8c8f0a8a"
+        ];
+
+        function getInitials(name) {
+            return name ? name.charAt(0).toUpperCase() : 'U';
+        }
+
+        function timeAgo(timestamp) {
+            if (!timestamp?.toDate) return 'Just now';
+            const seconds = Math.floor((new Date() - timestamp.toDate()) / 1000);
+            if (seconds < 60) return 'Just now';
+            let interval = seconds / 60;
+            if (interval < 60) return Math.floor(interval) + "min ago";
+            interval = seconds / 3600;
+            if (interval < 24) return Math.floor(interval) + "hr ago";
+            interval = seconds / 86400;
+            if (interval < 30) return Math.floor(interval) + "d ago";
+            interval = seconds / 2592000;
+            if (interval < 12) return Math.floor(interval) + "mo ago";
+            return Math.floor(seconds / 31536000) + "yr ago";
+        }
+
+        function formatLikes(num) {
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+            }
+            return num.toString();
+        }
+
+        function showAlert(message, isError = false) {
+            const alertEl = document.getElementById('alert');
+            document.getElementById('alert-message').textContent = message;
+            alertEl.className = `alert ${isError ? 'alert-error' : 'alert-success'} show`;
+            setTimeout(() => alertEl.classList.remove('show'), 4000);
+        }
+
+        function closePopup(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        async function createPost() {
+            const content = document.getElementById('postContent').value.trim();
+            if (!content) return showAlert("Post cannot be empty.", true);
+
+            try {
+                const randomImage = foodImages[Math.floor(Math.random() * foodImages.length)];
+                const baseLikes = Math.floor(Math.random() * 500) + 500; // 500–999
+
+                await addDoc(collection(db, "posts"), {
+                    userId: currentUser.uid,
+                    username: currentUser.username || currentUser.email.split('@')[0],
+                    content: content,
+                    imageUrl: randomImage,
+                    likes: baseLikes,
+                    timestamp: serverTimestamp()
+                });
+
+                showAlert("Post created successfully!", false);
+                closePopup('postPopup');
+                document.getElementById('postContent').value = '';
+                loadPosts();
+            } catch (err) {
+                console.error("Post error:", err);
+                showAlert("Failed to create post.", true);
+            }
+        }
+
+        function likePost(postId, likeBtn) {
+            if (likedPosts.has(postId)) {
+                showAlert("You already liked this post.", false);
+                return;
+            }
+
+            const sound = document.getElementById('likeSound');
+            sound.src = "https://www.soundjay.com/buttons/sounds/button-09.mp3";
+            sound.play().catch(() => {});
+
+            // Find the stat badge
+            const statBadge = likeBtn.closest('.post').querySelector('.stat-badge');
+            let currentLikes = parseInt(statBadge.dataset.likes) || 500;
+            currentLikes += 1;
+            statBadge.dataset.likes = currentLikes;
+            statBadge.innerHTML = `<i class="fas fa-heart"></i> ${formatLikes(currentLikes)}`;
+
+            likeBtn.querySelector('i').className = "fas fa-heart";
+            likeBtn.classList.add('liked');
+            likedPosts.add(postId);
+            showAlert("Liked!", false);
+        }
+
+        function requestDeletePost(postId) {
+            postToDelete = postId;
+            document.getElementById('deletePopup').style.display = 'flex';
+        }
+
+        async function confirmDeletePost() {
+            if (!postToDelete) return;
+            try {
+                await deleteDoc(doc(db, "posts", postToDelete));
+                showAlert("Post deleted successfully!", false);
+                closePopup('deletePopup');
+                loadPosts();
+            } catch (err) {
+                console.error("Delete error:", err);
+                showAlert("Failed to delete post.", true);
+            }
+        }
+
+        function calculateLikes(baseLikes, timestamp) {
+            if (!timestamp?.toDate) return baseLikes;
+            const ageMs = new Date() - timestamp.toDate();
+            const days = ageMs / (1000 * 60 * 60 * 24);
+            const extra = Math.floor(days) * 500;
+            return baseLikes + extra;
+        }
+
+        async function loadPosts() {
+            const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
+            const querySnapshot = await getDocs(q);
+            const posts = [];
+            querySnapshot.forEach(doc => {
+                posts.push({ id: doc.id, ...doc.data() });
+            });
+
+            renderPosts(posts);
+        }
+
+        function renderPosts(posts) {
+            const feed = document.getElementById('feed');
+            if (posts.length === 0) {
+                feed.innerHTML = `<div class="empty-feed">No posts yet.</div>`;
+                return;
+            }
+
+            feed.innerHTML = '';
+            posts.forEach(post => {
+                const timeStr = timeAgo(post.timestamp);
+                const actualLikes = calculateLikes(post.likes, post.timestamp);
+                const displayLikes = formatLikes(actualLikes);
+                const isOwner = currentUser?.email === ADMIN_EMAIL;
+
+                const postEl = document.createElement('div');
+                postEl.className = 'post-container';
+                postEl.innerHTML = `
+                    <div class="post">
+                        ${isOwner ? `<div class="delete-btn" onclick="requestDeletePost('${post.id}')">×</div>` : ''}
+                        <img src="${post.imageUrl}" class="post-image" alt="Post" />
+                        <div class="post-body">
+                            <div class="post-header">
+                                <div class="post-avatar">${getInitials(post.username)}</div>
+                                <div class="post-info">
+                                                                     <div class="post-username">${post.username}</div>
+                                <div class="post-time">${timeStr}</div>
+                            </div>
+                        </div>
+                        <div class="post-content">${post.content}</div>
+                        <div class="stats">
+                            <div class="stat-badge" data-likes="${actualLikes}">
+                                <i class="fas fa-heart"></i> ${displayLikes}
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <div class="action-btn ${likedPosts.has(post.id) ? 'liked' : ''}" onclick="likePost('${post.id}', this)">
+                                <i class="${likedPosts.has(post.id) ? 'fas' : 'far'} fa-heart"></i>
+                                <span>Like</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                feed.appendChild(postEl);
+            });
+        }
+
+        // Expose functions globally for inline onclick
+        window.closePopup = closePopup;
+        window.createPost = createPost;
+        window.requestDeletePost = requestDeletePost;
+        window.confirmDeletePost = confirmDeletePost;
+        window.likePost = likePost;
+
+        // Auth listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = {
+                    uid: user.uid,
+                    email: user.email,
+                    username: user.displayName || user.email.split('@')[0]
+                };
+                document.getElementById('headerUserInitial').textContent = getInitials(currentUser.username);
+
+                // Show + button only for admin
+                if (user.email === ADMIN_EMAIL) {
+                    document.getElementById('postBtn').style.display = 'flex';
+                }
+
+                loadPosts();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Open post popup
+        document.getElementById('postBtn').addEventListener('click', () => {
+            document.getElementById('postPopup').style.display = 'flex';
+        });
+    </script>
+</body>
 </html>

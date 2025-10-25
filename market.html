@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Market – Glovo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #fff9f9;
+            color: #333;
+            padding-bottom: 70px;
+        }
+
+        header {
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e50914;
+            flex: 1;
+            text-align: center;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ffeaa7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            background: white;
+            padding: 0 12px 8px;
+            gap: 12px;
+            border-bottom: 1px solid #eee;
+            scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+
+        .tab {
+            padding: 10px 14px;
+            white-space: nowrap;
+            font-weight: 600;
+            color: #888;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+        }
+        .tab.active {
+            color: #e50914;
+            border-bottom: 3px solid #e50914;
+        }
+
+        .market-grid {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .food-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .food-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .food-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .food-name {
+            font-weight: bold;
+            margin: 8px 0 4px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .food-price {
+            color: #e50914;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .order-btn {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        /* Alert */
+        .alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            padding: 24px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            text-align: center;
+            max-width: 90%;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+
+        .alert.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #00c853, #007e33);
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+        }
+
+        .alert-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        #orderPopup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .popup-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #e50914;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group input[type="time"],
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .btn-order {
+            background: #e50914;
+            color: white;
+        }
+
+        .delivery-note {
+            text-align: center;
+            padding: 12px;
+            color: #e50914;
+            font-size: 14px;
+            font-weight: bold;
+            background: #fff0f0;
+            margin: 0 16px 16px;
+            border-radius: 12px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .footer-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            font-size: 12px;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .footer-btn.active {
+            color: #e50914;
+            font-weight: bold;
+        }
+
+        .footer-btn i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .badge {
+            position: absolute;
+            top: -4px;
+            right: 12px;
+            background: #e50914;
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loader-spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">Market 🛍️</div>
+        <a href="profile.html" class="profile-icon" id="headerUserInitial">U</a>
+    </header>
+
+    <div class="delivery-note">
+        ⚠️ Order at least 2 hours before needed. Delivery fee: ₦2,000.
+    </div>
+
+    <div class="tabs" id="mainTabs">
+        <div class="tab active">Food 🍽️</div>
+    </div>
+
+    <div class="tabs" id="subTabs">
+        <div class="tab active" data-sub="pastry">Pastries</div>
+        <div class="tab" data-sub="cakes">Cakes</div>
+        <div class="tab" data-sub="drinks">Drinks</div>
+        <div class="tab" data-sub="vegetables">Vegetables</div>
+    </div>
+
+    <div class="market-grid" id="foodGrid"></div>
+
+    <div id="alert" class="alert">
+        <span class="alert-icon">🎉</span>
+        <span id="alert-message">You have successfully ordered!</span>
+    </div>
+
+    <div id="orderPopup">
+        <div class="popup-content">
+            <div class="popup-title">Confirm Order</div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="orderUsername" placeholder="Your display name" />
+            </div>
+            <div class="form-group">
+                <label>Delivery Address</label>
+                <textarea id="orderAddress" placeholder="e.g., 15 Awolowo Rd, Lagos"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" id="orderQuantity" min="1" value="1" />
+            </div>
+            <div class="form-group">
+                <label>Delivery Day</label>
+                <input type="date" id="deliveryDate" />
+            </div>
+            <div class="form-group">
+                <label>Delivery Time</label>
+                <input type="time" id="deliveryTime" />
+            </div>
+
+            <div class="loader" id="orderLoader">
+                <div class="loader-spinner"></div>
+                <div>Processing your order...</div>
+            </div>
+
+            <div class="popup-buttons">
+                <button class="btn-cancel" onclick="closeOrderPopup()">Cancel</button>
+                <button class="btn-order" onclick="submitOrder()">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="successSound" preload="auto"></audio>
+    <audio id="errorSound" preload="auto"></audio>
+
+    <footer>
+        <a href="dashboard.html" class="footer-btn">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="friends.html" class="footer-btn">
+            <i class="fas fa-users"></i> Friends
+        </a>
+        <a href="market.html" class="footer-btn active">
+            <i class="fas fa-shopping-bag"></i> Market
+        </a>
+        <a href="notifications.html" class="footer-btn" id="notifFooterBtn">
+            <i class="fas fa-bell"></i> Alerts
+            <span class="badge" id="notifBadge" style="display:none;">0</span>
+        </a>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyASOh_kA_d_L3T3L78Lvid0rjLKccKVFpw",
+            authDomain: "glovo-a0ea4.firebaseapp.com",
+            projectId: "glovo-a0ea4",
+            storageBucket: "glovo-a0ea4.firebasestorage.app",
+            messagingSenderId: "737022109409",
+            appId: "1:737022109409:web:84a0966d3681f3960479a0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const ADMIN_EMAIL = "bluepay863@gmail.com";
+        let currentUser = null;
+        let currentFoodItem = null;
+        let activeSub = "pastry";
+
+        const foodImages = {
+            "Meat Pie": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=600&h=300&q=80",
+            "Chicken Pie": "https://images.unsplash.com/photo-1626082927389-6cd3e2e7b7c5?auto=format&fit=crop&w=600&h=300&q=80",
+            "Chocolate Cake": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&h=300&q=80",
+            "Vanilla Cupcake": "https://images.unsplash.com/photo-1563379973274-94c2c6a61a33?auto=format&fit=crop&w=600&h=300&q=80",
+            "Fanta": "https://images.unsplash.com/photo-1584132960527-9a9e5a8c9e3b?auto=format&fit=crop&w=600&h=300&q=80",
+            "Coca-Cola": "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?auto=format&fit=crop&w=600&h=300&q=80",
+            "Tomatoes": "https://images.unsplash.com/photo-1588956381902-8f1c9b5e3b5e?auto=format&fit=crop&w=600&h=300&q=80",
+            "Onions": "https://images.unsplash.com/photo-1607083595789-e9a3e3f1d0d6?auto=format&fit=crop&w=600&h=300&q=80"
+        };
+
+        const foodData = {
+            pastry: [
+                { name: "Meat Pie", price: 800 },
+                { name: "Chicken Pie", price: 1000 }
+            ],
+            cakes: [
+                { name: "Chocolate Cake", price: 5000 },
+                { name: "Vanilla Cupcake", price: 800 }
+            ],
+            drinks: [
+                { name: "Fanta", price: 300 },
+                { name: "Coca-Cola", price: 350 }
+            ],
+            vegetables: [
+                { name: "Tomatoes", price: 500 },
+                { name: "Onions", price: 300 }
+            ]
+        };
+
+        function getInitials(name) {
+            return name ? name.charAt(0).toUpperCase() : 'U';
+        }
+
+        function formatNaira(amount) {
+            return "₦" + Number(amount).toLocaleString();
+        }
+
+        function showAlert(message, isError = false) {
+            const alertEl = document.getElementById('alert');
+            document.getElementById('alert-message').textContent = message;
+            alertEl.className = `alert ${isError ? 'alert-error' : 'alert-success'} show`;
+            
+            const sound = isError ? document.getElementById('errorSound') : document.getElementById('successSound');
+            sound.src = isError 
+                ? "https://www.soundjay.com/misc/sounds/error-02.mp3"
+                : "https://www.soundjay.com/misc/sounds/cash-register-2.mp3";
+            sound.play().catch(() => {});
+
+            setTimeout(() => alertEl.classList.remove('show'), 4000);
+        }
+
+        function closeOrderPopup() {
+            document.getElementById('orderPopup').style.display = 'none';
+            document.getElementById('orderLoader').style.display = 'none';
+        }
+
+        async function submitOrder() {
+            const username = document.getElementById('orderUsername').value.trim();
+            const address = document.getElementById('orderAddress').value.trim();
+            const quantity = parseInt(document.getElementById('orderQuantity').value) || 1;
+            const dateInput = document.getElementById('deliveryDate').value;
+            const timeInput = document.getElementById('deliveryTime').value;
+
+            if (!username) return showAlert("Please enter your username.", true);
+            if (!address) return showAlert("Please enter delivery address.", true);
+            if (quantity < 1) return showAlert("Quantity must be at least 1.", true);
+            if (!dateInput) return showAlert("Please select delivery day.", true);
+            if (!timeInput) return showAlert("Please select delivery time.", true);
+
+            const deliveryDateTime = new Date(dateInput + 'T' + timeInput);
+            const now = new Date();
+            const minTime = new Date(now.getTime() + 2 * 60 * 60 * 1000); // +2 hours
+
+            if (deliveryDateTime < minTime) {
+                return showAlert("⚠️ Must order at least 2 hours before delivery time.", true);
+            }
+
+            const day = deliveryDateTime.toLocaleDateString('en-US', { weekday: 'long' });
+            const timeDisplay = deliveryDateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            // Show loader
+            document.querySelector('.popup-buttons').style.display = 'none';
+            document.getElementById('orderLoader').style.display = 'block';
+
+            try {
+                const deliveryFee = 2000;
+                const totalFoodPrice = currentFoodItem.price * quantity;
+                const totalAmount = totalFoodPrice + deliveryFee;
+
+                const orderData = {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    username: username,
+                    foodName: currentFoodItem.name,
+                    foodPrice: currentFoodItem.price,
+                    quantity: quantity,
+                    deliveryFee: deliveryFee,
+                    totalAmount: totalAmount,
+                    customerName: username,
+                    deliveryAddress: address,
+                    deliveryDay: day,
+                    deliveryTime: timeDisplay,
+                    timestamp: serverTimestamp(),
+                    status: "pending"
+                };
+
+                const docRef = await addDoc(collection(db, "orders"), orderData);
+
+                // Save to localStorage for notifications.html
+                const notification = {
+                    id: docRef.id,
+                    ...orderData,
+                    read: false,
+                    type: 'order'
+                };
+                localStorage.setItem(`order_${docRef.id}`, JSON.stringify(notification));
+
+                let count = parseInt(localStorage.getItem('unreadOrders') || '0');
+                localStorage.setItem('unreadOrders', count + 1);
+                updateBadge();
+
+                // Hide loader, show success
+                document.getElementById('orderLoader').style.display = 'none';
+                closeOrderPopup();
+
+                showAlert(`✅ Order placed!\n${quantity}x ${currentFoodItem.name}\nDelivery: ${day} at ${timeDisplay}`, false);
+
+            } catch (err) {
+                console.error("Order failed:", err);
+                document.getElementById('orderLoader').style.display = 'none';
+                document.querySelector('.popup-buttons').style.display = 'flex';
+                showAlert("❌ Failed to place order. Try again.", true);
+            }
+        }
+
+        function openOrderPopup(food) {
+            if (currentUser?.email === ADMIN_EMAIL) {
+                showAlert("⚠️ Admin cannot place orders.", true);
+                return;
+            }
+            currentFoodItem = food;
+            document.getElementById('orderUsername').value = currentUser.username || currentUser.email.split('@')[0];
+            document.getElementById('orderQuantity').value = 1;
+
+            const now = new Date();
+            document.getElementById('deliveryDate').min = now.toISOString().split('T')[0];
+            const minTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+            document.getElementById('deliveryTime').value = `${String(minTime.getHours()).padStart(2, '0')}:${String(minTime.getMinutes()).padStart(2, '0')}`;
+
+            document.getElementById('orderPopup').style.display = 'flex';
+        }
+
+        function renderFood(sub) {
+            const grid = document.getElementById('foodGrid');
+            grid.innerHTML = '';
+            const items = foodData[sub] || [];
+            items.forEach(item => {
+                const img = foodImages[item.name] || "https://via.placeholder.com/150?text=No+Image";
+                const card = document.createElement('div');
+                                card.className = 'food-card';
+                card.innerHTML = `
+                    <img src="${foodImages[item.name] || 'https://via.placeholder.com/150?text=No+Image'}" class="food-image" alt="${item.name}" />
+                    <div class="food-name">${item.name}</div>
+                    <div class="food-price">${formatNaira(item.price)}</div>
+                    <button class="order-btn" onclick='openOrderPopup(${JSON.stringify(item).split('"').join('&quot;')})'>Order</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateBadge() {
+            const count = parseInt(localStorage.getItem('unreadOrders') || '0');
+            const badge = document.getElementById('notifBadge');
+            if (count > 0) {
+                badge.textContent = count > 9 ? '9+' : count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Expose functions to global scope for inline onclick
+        window.closeOrderPopup = closeOrderPopup;
+        window.submitOrder = submitOrder;
+        window.openOrderPopup = openOrderPopup;
+
+        // Handle sub-tab switching
+        document.querySelectorAll('#subTabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('#subTabs .tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                activeSub = tab.dataset.sub;
+                renderFood(activeSub);
+            });
+        });
+
+        // Firebase auth state listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = {
+                    uid: user.uid,
+                    email: user.email,
+                    username: user.displayName || user.email.split('@')[0]
+                };
+                document.getElementById('headerUserInitial').textContent = getInitials(currentUser.username);
+                renderFood(activeSub);
+                updateBadge();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>

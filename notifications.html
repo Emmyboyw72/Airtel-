@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications – Glovo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+            padding-bottom: 70px;
+        }
+
+        header {
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e50914;
+            flex: 1;
+            text-align: center;
+        }
+
+        .search-box {
+            padding: 12px;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-box input,
+        .search-box select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .notification-list {
+            padding: 0 16px;
+        }
+
+        .notification-item {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            border-left: 4px solid #e50914;
+        }
+
+        .notification-item.unread {
+            background: #fff8e1;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .notification-body {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .footer-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            font-size: 12px;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .footer-btn.active {
+            color: #e50914;
+            font-weight: bold;
+        }
+
+        .footer-btn i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .badge {
+            position: absolute;
+            top: -4px;
+            right: 12px;
+            background: #e50914;
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">Alerts 🔔</div>
+    </header>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search orders..." oninput="filterNotifications()" />
+        <select id="dayFilter" onchange="filterNotifications()">
+            <option value="">All Days</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+    </div>
+
+    <div class="notification-list" id="notifList">
+        <!-- Notifications loaded here -->
+    </div>
+
+    <footer>
+        <a href="dashboard.html" class="footer-btn">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="friends.html" class="footer-btn">
+            <i class="fas fa-users"></i> Friends
+        </a>
+        <a href="market.html" class="footer-btn">
+            <i class="fas fa-shopping-bag"></i> Market
+            <span class="badge" id="marketBadge" style="display:none;">0</span>
+        </a>
+        <a href="notifications.html" class="footer-btn active">
+            <i class="fas fa-bell"></i> Alerts
+        </a>
+    </footer>
+
+    <script>
+        let allNotifications = [];
+
+        function loadNotifications() {
+            // Reset badge count
+            localStorage.setItem('unreadOrders', '0');
+            updateMarketBadge();
+
+            // Load all order notifications
+            const notifs = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('order_')) {
+                    const item = JSON.parse(localStorage.getItem(key));
+                    notifs.push(item);
+                }
+            }
+
+            allNotifications = notifs.sort((a, b) => {
+                const aTime = a.timestamp?.seconds || 0;
+                const bTime = b.timestamp?.seconds || 0;
+                return bTime - aTime;
+            });
+
+            renderNotifications(allNotifications);
+        }
+
+        function renderNotifications(list) {
+            const container = document.getElementById('notifList');
+            if (list.length === 0) {
+                container.innerHTML = `<div class="empty-state">No alerts yet.</div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(n => `
+                <div class="notification-item">
+                    <div class="notification-header">
+                        <div class="notification-title">New Order</div>
+                        <div class="notification-time">${n.deliveryDay} • ${n.deliveryTime}</div>
+                    </div>
+                    <div class="notification-body">
+                        <strong>${n.username}</strong> ordered <strong>${n.quantity}x ${n.foodName}</strong> (${formatNaira(n.foodPrice)} each)<br>
+                        📍 ${n.deliveryAddress}<br>
+                        💰 Total: ${formatNaira(n.totalAmount)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatNaira(amount) {
+            return "₦" + Number(amount).toLocaleString();
+        }
+
+        function filterNotifications() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const day = document.getElementById('dayFilter').value;
+
+            const filtered = allNotifications.filter(n => {
+                const matchesSearch = n.username.toLowerCase().includes(query) ||
+                                      n.foodName.toLowerCase().includes(query) ||
+                                      n.deliveryAddress.toLowerCase().includes(query);
+                const matchesDay = !day || n.deliveryDay === day;
+                return matchesSearch && matchesDay;
+            });
+
+            renderNotifications(filtered);
+        }
+
+        function updateMarketBadge() {
+            const count = parseInt(localStorage.getItem('unreadOrders') || '0');
+            const badge = document.getElementById('marketBadge');
+            if (count > 0) {
+                badge.textContent = count > 9 ? '9+' : count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        window.onload = () => {
+            loadNotifications();
+            // Optional: periodically check for new orders if you later use Firestore listener
+        };
+    </script>
+</body>
+</html>

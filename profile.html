@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile – Glovo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #fff9f9;
+            color: #333;
+            padding-bottom: 70px;
+        }
+
+        header {
+            background: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ffeaa7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #e50914;
+            font-size: 24px;
+        }
+
+        .header-info h1 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        .header-info p {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .profile-section {
+            padding: 24px 16px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .profile-row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .value {
+            color: #333;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .logout-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #e50914;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Beautiful Confirmation Popup */
+        #confirmLogoutPopup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 28px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .popup-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #e50914;
+        }
+
+        .popup-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .popup-message {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .popup-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+
+        .btn-cancel {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .btn-logout {
+            background: #e50914;
+            color: white;
+        }
+
+        /* Alert (for errors only) */
+        .alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            padding: 20px 28px;
+            border-radius: 16px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            text-align: center;
+            max-width: 90%;
+            background: #00c853;
+        }
+
+        .alert.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .alert-error {
+            background: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="avatar" id="profileAvatar">U</div>
+        <div class="header-info">
+            <h1 id="profileName">User</h1>
+            <p id="profileEmail">—</p>
+        </div>
+    </header>
+
+    <div class="profile-section">
+        <div class="profile-card">
+            <div class="profile-row">
+                <span class="label">Username</span>
+                <span class="value" id="usernameValue">—</span>
+            </div>
+            <div class="profile-row">
+                <span class="label">Gmail</span>
+                <span class="value" id="emailValue">—</span>
+            </div>
+            <div class="profile-row">
+                <span class="label">Phone</span>
+                <span class="value" id="phoneValue">—</span>
+            </div>
+            <div class="profile-row">
+                <span class="label">Address</span>
+                <span class="value" id="addressValue">—</span>
+            </div>
+        </div>
+
+        <button class="logout-btn" onclick="showLogoutConfirm()">
+            <i class="fas fa-sign-out-alt"></i> Log Out
+        </button>
+    </div>
+
+    <!-- Beautiful Logout Confirmation Popup -->
+    <div id="confirmLogoutPopup">
+        <div class="popup-content">
+            <div class="popup-icon">🍲</div>
+            <div class="popup-title">Log Out?</div>
+            <div class="popup-message">Are you sure you want to log out of your Glovo account?</div>
+            <div class="popup-buttons">
+                <button class="popup-btn btn-cancel" onclick="hideLogoutConfirm()">Cancel</button>
+                <button class="popup-btn btn-logout" onclick="performLogout()">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert for errors -->
+    <div id="alert" class="alert">
+        <span id="alert-message">Profile loaded!</span>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyASOh_kA_d_L3T3L78Lvid0rjLKccKVFpw",
+            authDomain: "glovo-a0ea4.firebaseapp.com",
+            projectId: "glovo-a0ea4",
+            storageBucket: "glovo-a0ea4.firebasestorage.app",
+            messagingSenderId: "737022109409",
+            appId: "1:737022109409:web:84a0966d3681f3960479a0",
+            measurementId: "G-W2BMB39T29"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function getInitials(name) {
+            return name ? name.charAt(0).toUpperCase() : 'U';
+        }
+
+        function showAlert(message, isError = false) {
+            const alertEl = document.getElementById('alert');
+            document.getElementById('alert-message').textContent = message;
+            alertEl.className = `alert ${isError ? 'alert-error' : ''} show`;
+            setTimeout(() => alertEl.classList.remove('show'), 3000);
+        }
+
+        function showLogoutConfirm() {
+            document.getElementById('confirmLogoutPopup').style.display = 'flex';
+        }
+
+        function hideLogoutConfirm() {
+            document.getElementById('confirmLogoutPopup').style.display = 'none';
+        }
+
+        async function performLogout() {
+            hideLogoutConfirm();
+            try {
+                await signOut(auth);
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error("Logout error:", error);
+                showAlert("Failed to log out. Please try again.", true);
+            }
+        }
+
+        async function loadUserProfile(uid) {
+            const userRef = doc(db, 'users', uid);
+            const userSnap = await getDoc(userRef);
+
+            let userData;
+            if (!userSnap.exists()) {
+                // Auto-create minimal user doc if missing
+                const email = auth.currentUser.email;
+                const username = email.split('@')[0];
+                userData = { email, username, phone: '', address: '' };
+                await setDoc(userRef, { ...userData, createdAt: serverTimestamp() });
+            } else {
+                userData = userSnap.data();
+            }
+
+            const { username = 'User', email = '', phone = '—', address = '—' } = userData;
+
+            document.getElementById('profileName').textContent = username;
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('profileAvatar').textContent = getInitials(username);
+
+            document.getElementById('usernameValue').textContent = username;
+            document.getElementById('emailValue').textContent = email;
+            document.getElementById('phoneValue').textContent = phone || '—';
+            document.getElementById('addressValue').textContent = address || '—';
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadUserProfile(user.uid);
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>
